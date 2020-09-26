@@ -23,14 +23,16 @@
     "nodemon": "^2.0.4"
   },
   "dependencies": {
+    "biguint-format": "^1.0.2",
+    "cookies": "^0.8.0",
     "express": "^4.17.1",
     "file-type": "^15.0.1",
+    "flake-idgen": "^1.4.0",
     "graceful-fs": "^4.2.4",
     "ip": "^1.1.5",
     "music-metadata": "^7.4.0",
     "mysql2": "^2.2.5",
     "sequelize": "^6.3.5",
-    "snowflake-id": "^1.1.0",
     "socket.io": "^2.3.0",
     "sqlite3": "^5.0.0",
     "stratter": "^1.0.1",
