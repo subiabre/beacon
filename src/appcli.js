@@ -79,6 +79,7 @@ class AppCLI
                 sockets[index] = {
                     id: model.dataValues.id,
                     userAgent: model.dataValues.userAgentOriginal,
+                    online: model.dataValues.online,
                     connectedAt: model.dataValues.connectedAt
                 }
             });
