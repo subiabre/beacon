@@ -11,17 +11,24 @@ class Events
      */
     server(io)
     {
-        io.on('connect', async (socket) => {
-            let model = await this.newModel(socket);
-            let modelList = await this.getModels();
+        let sockets;
 
-            io.emit('socket:update', modelList);
+        io.on('connect', async (socket) => {
+            let model = await this.getModel(socket);
+
+            if (!model) {
+                model = await this.newModel(socket);
+            }
+
+            sockets = await this.getModels();
+
+            io.emit('socket:update', sockets);
 
             socket.on('disconnect', async () => {
-                let model = await this.deleteModel(socket);
-                let modelList = await this.getModels();
+                await this.deleteModel(socket);
+                sockets = await this.getModels();
                 
-                io.emit('socket:update', modelList);
+                io.emit('socket:update', sockets);
             });
         });
     }
@@ -29,6 +36,11 @@ class Events
     async getModels()
     {
         return await SocketModel.findAll()
+    }
+
+    async getModel(socket)
+    {
+        return await SocketModel.findOne({ where: { id: socket.id }});
     }
 
     /**
