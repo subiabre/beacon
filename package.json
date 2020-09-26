@@ -30,6 +30,7 @@
     "music-metadata": "^7.4.0",
     "mysql2": "^2.2.5",
     "sequelize": "^6.3.5",
+    "snowflake-id": "^1.1.0",
     "socket.io": "^2.3.0",
     "sqlite3": "^5.0.0",
     "stratter": "^1.0.1",
