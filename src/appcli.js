@@ -40,9 +40,10 @@ class AppCLI
                 this.localAddress = `http://localhost:${listener.address().port}`;
                 this.listener = listener;
                 
-                app.log('Server now live:');
-                app.log('On your machine: ' + this.localAddress);
-                app.log('On local network: ' + this.netAddress);
+                app.log('beacon Server is now live!');
+                app.log('Web address is:');
+                app.log('On this machine: ' + this.localAddress);
+                app.log('On this network: ' + this.netAddress);
             });
 
             callback();
@@ -57,7 +58,7 @@ class AppCLI
             }
 
             server.close();
-            app.log('Stopped listening at: ' + this.localAddress);
+            app.log('Server stopped listening at the address ' + this.localAddress);
 
             this.netAddress = null;
             this.localAddress = null;
