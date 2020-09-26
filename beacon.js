@@ -8,7 +8,7 @@ const events = require('./src/events');
 const routes = require('./src/routes');
 const appcli = require('./src/appcli');
 
-io.engine.generateId = require('./src/idengine');
+io.engine.generateId = require('./src/utils/socketid');
 
 app.use(express.static(__dirname + '/public'));
 app.use(routes);

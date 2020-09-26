@@ -8,7 +8,7 @@ const intformat = require('biguint-format')
 /**
  * Replaces SocketIO id generation with browser persistent ids
  */
-const generateId = (req, res) => {
+const socketId = (req, res) => {
     let cookies = new Cookies(req, res);
     let hasCookie = cookies.get('io');
 
@@ -19,4 +19,4 @@ const generateId = (req, res) => {
     return hasCookie;
 }
 
-module.exports = generateId;
+module.exports = socketId;
