@@ -20,13 +20,14 @@ class Events
                 model = await this.newModel(socket);
             }
 
-            sockets = await this.getModels();
+            model = await this.connectModel(socket);
+            sockets = await this.getModelsOnline();
 
             io.emit('socket:update', sockets);
 
             socket.on('disconnect', async () => {
-                await this.deleteModel(socket);
-                sockets = await this.getModels();
+                model = await this.disconnectModel(socket);
+                sockets = await this.getModelsOnline();
                 
                 io.emit('socket:update', sockets);
             });
@@ -35,7 +36,12 @@ class Events
 
     async getModels()
     {
-        return await SocketModel.findAll()
+        return await SocketModel.findAll();
+    }
+
+    async getModelsOnline()
+    {
+        return await SocketModel.findAll({ where: { online: true }});
     }
 
     async getModel(socket)
@@ -49,16 +55,25 @@ class Events
      */
     async newModel(socket)
     {
-        let model = SocketModel.build({
-            id: socket.id,
-            userAgent: UserAgent.parse(socket.handshake.headers['user-agent']),
-            userAgentOriginal: socket.handshake.headers['user-agent'],
-            connectedAt: new Date
-        });
+        return await SocketModel
+            .create({
+                id: socket.id,
+                userAgent: UserAgent.parse(socket.handshake.headers['user-agent']),
+                userAgentOriginal: socket.handshake.headers['user-agent']
+            })
+            .then(model => model)
+            .catch(err => console.log(err));
+    }
 
-        model
+    async connectModel(socket)
+    {
+        let model = await this.getModel(socket);
+
+        model.online = true;
+
+        return await model
             .save()
-            .then(model => {model})
+            .then(model => model)
             .catch(err => console.log(err));
     }
 
@@ -66,15 +81,15 @@ class Events
      * Delete a socket from database
      * @param {SocketIO.Socket} socket 
      */
-    async deleteModel(socket)
+    async disconnectModel(socket)
     {
-        let model = await SocketModel.findOne({ where: { id: socket.id }});
+        let model = await this.getModel(socket);
 
-        if (!model) return await this.getModels();
+        model.online = false;
 
-        return model
-            .destroy()
-            .then(model => {model})
+        return await model
+            .save()
+            .then(model => model)
             .catch(err => console.log(err));
     }
 }

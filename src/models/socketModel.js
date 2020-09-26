@@ -15,9 +15,15 @@ const Socket = sequelize.define('Socket', {
     type: DataTypes.STRING,
     allowNull: false
   },
+  online: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
   connectedAt: {
       type: DataTypes.TIME,
-      allowNull: false
+      allowNull: false,
+      defaultValue: new Date()
   }
 });
 
