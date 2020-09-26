@@ -32,6 +32,8 @@
     "sequelize": "^6.3.5",
     "socket.io": "^2.3.0",
     "sqlite3": "^5.0.0",
-    "user-agent-parse": "^0.1.12"
+    "stratter": "^1.0.1",
+    "user-agent-parse": "^0.1.12",
+    "vorpal": "^1.12.0"
   }
 }
