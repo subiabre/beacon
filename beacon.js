@@ -6,10 +6,13 @@ const io = require('socket.io')(server);
 
 const events = require('./src/events');
 const routes = require('./src/routes');
-const comnds = require('./src/comnds');
+const appcli = require('./src/appcli');
+
+io.engine.generateId = require('./src/idengine');
 
 app.use(express.static(__dirname + '/public'));
 app.use(routes);
 
 events.server(io);
-comnds.client(server);
+appcli.server(server);
+appcli.sockets();
