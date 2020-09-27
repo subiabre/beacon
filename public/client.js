@@ -1,6 +1,25 @@
-const socketList = document.getElementById('sockets');
-const socketClient = io();
-let   socketTarget = socketClient.id;
+"use strict";
+
+const Socket = io();
+let Client;
+let Target;
+
+Socket.on('connect', () => {
+    Client = Socket.id;
+    Target = Socket.id;
+});
+
+Socket.on('socket:update', (list) => {
+    updateSocketList(list);
+});
+
+Socket.on('socket:setOrigin', (origin) => {
+    setOrigin(origin)
+});
+
+Socket.on('socket:resetOrigin', (origin) => {
+    resetOrigin(origin);
+});
 
 const newSocket = (socket) => {
     let item = document.createElement('li');
@@ -12,7 +31,7 @@ const newSocket = (socket) => {
     item.setAttribute('onclick', 'handleSetTarget(event)');
     item.innerText = `${socket.userAgent.name} @ ${socket.userAgent.os} ${socket.userAgent.device_type}`;
 
-    if (socket.id == socketClient.id) {
+    if (socket.id == Client) {
         item.setAttribute('class', 'socket disabled');
         item.setAttribute('title', 'You are this user.');
         item.setAttribute('onclick', null);
@@ -21,11 +40,13 @@ const newSocket = (socket) => {
     return item;
 };
 
-const updateSocketList = (list) => {    
-    socketList.innerHTML = '';
-    list.forEach(socket => {
+const updateSocketList = (sockets) => {    
+    let list = document.getElementById('sockets');
+    
+    list.innerHTML = '';
+    sockets.forEach(socket => {
         let item = newSocket(socket);
-        socketList.appendChild(item);
+        list.appendChild(item);
     });
 }
 
@@ -48,7 +69,7 @@ const resetOrigin = (origin) => {
 const handleSetTarget = (event) => {
     let target = event.target.getAttribute('socketid');
 
-    resetTarget(socketTarget);
+    resetTarget(Target);
     setTarget(target);
 }
 
@@ -59,8 +80,8 @@ const setTarget = (target) => {
     item.setAttribute('title', 'You are emitting to this user.');
     item.setAttribute('onclick', 'handleResetTarget(event)');
 
-    socketTarget = target;
-    socketClient.emit('socket:setTarget', target);
+    Target = target;
+    Socket.emit('socket:setTarget', target);
 };
 
 const handleResetTarget = (event) => {
@@ -76,18 +97,6 @@ const resetTarget = (target) => {
     item.setAttribute('title', 'Emit to this user.');
     item.setAttribute('onclick', 'handleSetTarget(event)');
 
-    socketTarget = socketClient.id;
-    socketClient.emit('socket:resetTarget', target);
+    Target = Client;
+    Socket.emit('socket:resetTarget', target);
 }
-
-socketClient.on('socket:update', (list) => {
-    updateSocketList(list);
-});
-
-socketClient.on('socket:setOrigin', (origin) => {
-    setOrigin(origin)
-});
-
-socketClient.on('socket:resetOrigin', (origin) => {
-    resetOrigin(origin);
-});
