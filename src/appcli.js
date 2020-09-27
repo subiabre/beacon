@@ -6,7 +6,12 @@ const Vorpal = require("vorpal");
 const app = new Vorpal();
 const ip = require('ip');
 const os = require('os');
+const fs = require('graceful-fs');
+const filetype = require('file-type');
+const mm = require('music-metadata');
+const recursiveReadDir = require('recursive-readdir');
 const stratter = require('stratter');
+const SongModel = require('./models/songModel');
 
 class AppCLI
 {
@@ -63,6 +68,43 @@ class AppCLI
             this.netAddress = null;
             this.localAddress = null;
             this.listener = false;
+
+            callback();
+        });
+    }
+
+    data()
+    {
+        app.command('import <folder>', 'Import music from the given folder.')
+        .action(async (args, callback) => {
+            let folderExists = fs.existsSync(args.folder);
+
+            if (!folderExists) {
+                app.log(args.folder + 'is not a directory.');
+            }
+
+            let files = await recursiveReadDir(args.folder);
+            
+            for (let index = 0; index < files.length; index++) {
+                let percentage = Math.round(index * 100 / files.length);
+                let file = files[index];
+                let type = await filetype.fromFile(file);
+
+                if (!type || !type.mime.match(/audio\/.*/)) {
+                    continue;
+                }
+
+                let data = await mm.parseFile(file)
+                    .catch(err => {
+                        app.log(`Error: could not read metadata of ${file}`);
+                    });
+                await SongModel.create({
+                    file: file,
+                    meta: data
+                });
+
+                app.ui.redraw(`Reading from ${args.folder}. ${index}/${files.length} (${percentage}%)`);
+            }
 
             callback();
         });
