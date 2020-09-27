@@ -29,7 +29,9 @@ const newSocket = (socket) => {
     item.setAttribute('class', 'socket');
     item.setAttribute('title', 'Emit to this user.');
     item.setAttribute('onclick', 'handleSetTarget(event)');
-    item.innerText = `${socket.userAgent.name} @ ${socket.userAgent.os} ${socket.userAgent.device_type}`;
+    item.innerText = `${socket.userAgent.browser.name} @ ${socket.userAgent.os.name} ${socket.userAgent.device.type}`;
+
+    console.log(socket.userAgent);
 
     if (socket.id == Client) {
         item.setAttribute('class', 'socket disabled');

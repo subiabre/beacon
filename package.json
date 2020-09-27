@@ -37,7 +37,7 @@
     "socket.io": "^2.3.0",
     "sqlite3": "^5.0.0",
     "stratter": "^1.0.1",
-    "user-agent-parse": "^0.1.12",
+    "ua-parser-js": "^0.7.22",
     "vorpal": "^1.12.0"
   }
 }

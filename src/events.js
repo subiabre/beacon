@@ -1,7 +1,7 @@
 "use strict";
 
 const SocketModel = require("./models/socketModel");
-const UserAgent = require("user-agent-parse");
+const UAParser = require('ua-parser-js');
 
 class Events
 {
@@ -66,7 +66,7 @@ class Events
         return await SocketModel
             .create({
                 id: socket.id,
-                userAgent: UserAgent.parse(socket.handshake.headers['user-agent']),
+                userAgent: UAParser(socket.handshake.headers['user-agent']),
                 userAgentOriginal: socket.handshake.headers['user-agent']
             })
             .then(model => model)
