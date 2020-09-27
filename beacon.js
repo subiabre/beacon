@@ -15,4 +15,5 @@ app.use(routes);
 
 events.server(io);
 appcli.server(server);
+appcli.data();
 appcli.sockets();
