@@ -22,8 +22,6 @@ class AppCLI
         app
             .delimiter(stratter(`beacon@${os.hostname()}`, { foreground: "blue" }) + ':')
             .show();
-
-        this.listener = false;
     }
 
     /**
@@ -32,6 +30,8 @@ class AppCLI
      */
     server(server)
     {
+        this.serverStatus = 'Server has not been started yet. Type "start" to start the server.';
+
         app.command('start [port]', 'Starts the listening server.')
         .alias('up')
         .action((args, callback) => {
@@ -41,14 +41,16 @@ class AppCLI
 
             // Launch server
             const listener = server.listen(args.port || process.env.PORT || 3127, async () => {
+                let status = stratter('live', { foreground: "green" });
                 this.netAddress = `http://${ip.address()}:${listener.address().port}`;
                 this.localAddress = `http://localhost:${listener.address().port}`;
-                this.listener = listener;
                 
-                app.log('beacon Server is now live!');
-                app.log('Web address is:');
-                app.log('On this machine: ' + this.localAddress);
-                app.log('On this network: ' + this.netAddress);
+                this.serverStatus = `beacon Server is ${status}.`;
+                this.serverStatus += '\nWeb address is:';
+                this.serverStatus += `\nOn this machine: ${this.localAddress}`;
+                this.serverStatus += `\nOn this network: ${this.netAddress}`;
+                
+                app.log(this.serverStatus);
             });
 
             callback();
@@ -57,17 +59,31 @@ class AppCLI
         app.command('stop', 'Stops the listening server.')
         .alias('down')
         .action((args, callback) => {
-            if (!this.listener) {
+            let status = stratter('closed', { foreground: "magenta" });
+            if (!server.listening) {
                 app.log('Server was already closed.');
                 return callback();
             }
 
             server.close();
-            app.log('Server stopped listening at the address ' + this.localAddress);
+
+            this.serverStatus = `beacon Server is ${status}.`;
+            this.serverStatus += `\nWeb address was:`;
+            this.serverStatus += `\nOn this machine: ${this.localAddress}`;
+            this.serverStatus += `\nOn this network: ${this.netAddress}`;
+            this.serverStatus += `\nStopped at: ${new Date().toISOString()}`;
 
             this.netAddress = null;
             this.localAddress = null;
-            this.listener = false;
+
+            app.log(this.serverStatus);
+
+            callback();
+        });
+
+        app.command('status', 'Shows the server status.')
+        .action((args, callback) => {
+            app.log(this.serverStatus);
 
             callback();
         });
