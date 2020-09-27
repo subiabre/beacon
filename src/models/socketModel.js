@@ -3,7 +3,7 @@ const sequelize = new Sequelize('sqlite::memory:', {logging: false});
 
 const Socket = sequelize.define('Socket', {
   id: {
-    type: DataTypes.BIGINT,
+    type: DataTypes.STRING,
     allowNull: false,
     primaryKey: true
   },
