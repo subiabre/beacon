@@ -1,11 +1,19 @@
 const socketList = document.getElementById('sockets');
+const socketClient = io();
+let   socketTarget = socketClient.id;
 
 const newSocket = (socket) => {
     let item = document.createElement('li');
     
-    item.setAttribute('id', 'socket' + socket.id);
-    item.setAttribute('class', 'socket');
+    item.setAttribute('socketid', socket.id);
+    item.setAttribute('class', 'socket disabled');
     item.innerText = `${socket.userAgent.name} @ ${socket.userAgent.os} ${socket.userAgent.device_type}`;
+
+    if (socket.id !== socketClient.id) {
+        item.setAttribute('class', 'socket');
+        item.setAttribute('onclick', 'selectTarget(event)');
+    }
+
     return item;
 };
 
@@ -17,8 +25,13 @@ const updateSocketList = (list) => {
     });
 }
 
-const socket = io();
+const selectTarget = (event) => {
+    let socketId = event.target.getAttribute('socketid');
 
-socket.on('socket:update', (list) => {
+    socketTarget = socketId;
+    socketClient.emit('socket:choose', socketTarget);
+};
+
+socketClient.on('socket:update', (list) => {
     updateSocketList(list);
 });
