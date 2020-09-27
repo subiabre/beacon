@@ -9,7 +9,7 @@ const newSocket = (socket) => {
     item.setAttribute('socketid', new String(socket.id));
     item.setAttribute('class', 'socket');
     item.setAttribute('title', 'Emit to this user.');
-    item.setAttribute('onclick', 'setTarget(event)');
+    item.setAttribute('onclick', 'handleSetTarget(event)');
     item.innerText = `${socket.userAgent.name} @ ${socket.userAgent.os} ${socket.userAgent.device_type}`;
 
     if (socket.id == socketClient.id) {
@@ -42,32 +42,42 @@ const resetOrigin = (origin) => {
 
     item.setAttribute('class', 'socket');
     item.setAttribute('title', 'Emit to this user.');
-    item.setAttribute('onclick', 'setTarget(event)');
+    item.setAttribute('onclick', 'handleSetTarget(event)');
 }
 
-const setTarget = (event) => {
-    let item = event.target;
-    let socketId = item.getAttribute('socketid');
+const handleSetTarget = (event) => {
+    let target = event.target.getAttribute('socketid');
+
+    resetTarget(socketTarget);
+    setTarget(target);
+}
+
+const setTarget = (target) => {
+    let item = document.getElementById('#socket' + target);
 
     item.setAttribute('class', 'socket target');
     item.setAttribute('title', 'You are emitting to this user.');
-    item.setAttribute('onclick', 'resetTarget(event)');
+    item.setAttribute('onclick', 'handleResetTarget(event)');
 
-    socketTarget = socketId;
-    socketClient.emit('socket:setTarget', socketTarget);
+    socketTarget = target;
+    socketClient.emit('socket:setTarget', target);
 };
 
-const resetTarget = (event) => {
-    let item = event.target;
-    let previousTarget = item.getAttribute('socketid');
-    let socketId = socketClient.id;
+const handleResetTarget = (event) => {
+    let target = event.target.getAttribute('socketid');
+    
+    resetTarget(target);
+}
+
+const resetTarget = (target) => {
+    let item = document.getElementById('#socket' + target);
 
     item.setAttribute('class', 'socket');
     item.setAttribute('title', 'Emit to this user.');
-    item.setAttribute('onclick', 'setTarget(event)');
+    item.setAttribute('onclick', 'handleSetTarget(event)');
 
-    socketTarget = socketId;
-    socketClient.emit('socket:resetTarget', previousTarget);
+    socketTarget = socketClient.id;
+    socketClient.emit('socket:resetTarget', target);
 }
 
 socketClient.on('socket:update', (list) => {
