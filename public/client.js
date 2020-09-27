@@ -69,7 +69,9 @@ const resetOrigin = (origin) => {
 const handleSetTarget = (event) => {
     let target = event.target.getAttribute('socketid');
 
-    resetTarget(Target);
+    if (Target !== Client) {
+        resetTarget(Target);
+    }
     setTarget(target);
 }
 
