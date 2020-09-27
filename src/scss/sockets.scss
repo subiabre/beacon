@@ -1,0 +1,28 @@
+#sockets {
+    padding: 0;
+    margin: 0;
+
+    background-color: #000000;
+    color: #ffffff;
+
+    list-style: none;
+
+    overflow-y: scroll;
+
+    li {
+        padding: 1em;
+    }
+
+    .disabled {
+        opacity: 0.6;
+    }
+
+    .target {
+        background-color: #333333;
+        color: #9de708;
+    }
+
+    .origin {
+        color: #0085ff;
+    }
+}
