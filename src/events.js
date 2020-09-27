@@ -31,6 +31,14 @@ class Events
                 
                 io.emit('socket:update', sockets);
             });
+
+            socket.on('socket:setTarget', async (socketTarget) => {
+                io.to(socketTarget).emit('socket:setOrigin', socket.id);
+            });
+
+            socket.on('socket:resetTarget', async (socketTarget) => {
+                io.to(socketTarget).emit('socket:resetOrigin', socket.id);
+            });
         });
     }
 
