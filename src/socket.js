@@ -66,11 +66,27 @@ class Socket
         return await SocketModel
             .create({
                 id: socket.id,
-                userAgent: UAParser(socket.handshake.headers['user-agent']),
+                userAgent: this.parseUserAgent(socket.handshake.headers['user-agent']),
                 userAgentOriginal: socket.handshake.headers['user-agent']
             })
             .then(model => model)
             .catch(err => console.log(err));
+    }
+
+    /**
+     * Parses an User agent string
+     * @param {String} userAgent User agent as an string
+     * @returns {Object}
+     */
+    parseUserAgent(userAgent)
+    {
+        let ua = UAParser(userAgent);
+
+        if (typeof ua.device.type == "undefined") {
+            ua.device.type = "pc";
+        }
+
+        return ua;
     }
 
     async connectModel(socket)
