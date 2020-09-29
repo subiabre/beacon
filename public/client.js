@@ -24,15 +24,15 @@ Socket.on('socket:resetOrigin', (origin) => {
 const newSocket = (socket) => {
     let item = document.createElement('li');
     
+    item.setAttribute('class', 'hoverBlackLight');
     item.setAttribute('id', '#socket' + socket.id);
     item.setAttribute('socketid', new String(socket.id));
-    item.setAttribute('class', 'socket');
     item.setAttribute('title', 'Emit to this user.');
     item.setAttribute('onclick', 'handleSetTarget(event)');
     item.innerText = `${socket.userAgent.browser.name} @ ${socket.userAgent.os.name} ${socket.userAgent.device.type}`;
 
     if (socket.id == Client) {
-        item.setAttribute('class', 'socket disabled');
+        item.setAttribute('class', 'disabled')
         item.setAttribute('title', 'You are this user.');
         item.setAttribute('onclick', null);
     }
@@ -53,7 +53,7 @@ const updateSocketList = (sockets) => {
 const setOrigin = (origin) => {
     let item = document.getElementById('#socket' + origin);
 
-    item.setAttribute('class', 'socket origin');
+    item.setAttribute('class', 'textBlue bgBlackLight');
     item.setAttribute('title', 'This user is emitting to you.');
     item.setAttribute('onclick', null);
 };
@@ -61,7 +61,7 @@ const setOrigin = (origin) => {
 const resetOrigin = (origin) => {
     let item = document.getElementById('#socket' + origin);
 
-    item.setAttribute('class', 'socket');
+    item.setAttribute('class', 'hoverBlackLight');
     item.setAttribute('title', 'Emit to this user.');
     item.setAttribute('onclick', 'handleSetTarget(event)');
 }
@@ -78,7 +78,7 @@ const handleSetTarget = (event) => {
 const setTarget = (target) => {
     let item = document.getElementById('#socket' + target);
 
-    item.setAttribute('class', 'socket target');
+    item.setAttribute('class', 'textGreen bgBlackLight');
     item.setAttribute('title', 'You are emitting to this user.');
     item.setAttribute('onclick', 'handleResetTarget(event)');
 
@@ -95,7 +95,7 @@ const handleResetTarget = (event) => {
 const resetTarget = (target) => {
     let item = document.getElementById('#socket' + target);
 
-    item.setAttribute('class', 'socket');
+    item.setAttribute('class', 'hoverBlackLight');
     item.setAttribute('title', 'Emit to this user.');
     item.setAttribute('onclick', 'handleSetTarget(event)');
 

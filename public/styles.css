@@ -1,0 +1,96 @@
+/**
+    Classes that start with uppercase are component classes
+    Classes that start with lowercase are component modifiers
+
+    This CSS styles are written in a functional/atomic architecture of CSS:
+    https://www.smashingmagazine.com/2013/10/challenging-css-best-practices-atomic-approach/
+
+    The purpose of this approach to CSS is to have stylesheets that are
+    predictable, reusable, maintainable, and scalable.
+*/
+* { 
+    padding: 0;
+    margin: 0;
+    position: relative;
+    font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+/**
+ Lists
+*/
+.List
+{
+    list-style: none;
+}
+.List li
+{
+    padding: 1em;
+}
+
+/**
+ Actions
+*/
+.disabled
+{
+    opacity: 0.7;
+}
+
+/**
+ Hoverables
+*/
+.hoverBlackLight:hover
+{
+    background-color: #333232;
+}
+.hoverWhiteGrey:hover
+{
+    background-color: #cecccc;
+}
+
+/**
+ Backgrounds
+*/
+.bgBlack
+{
+    background-color: #121312;
+}
+.bgBlackLight
+{
+    background-color: #333232;
+}
+.bgWhite
+{
+    background-color: #ffffff;
+}
+.bgWhiteGrey
+{
+    background-color: #cecccc;
+}
+
+/**
+ Texts
+*/
+.textBlack
+{
+    color: #121312;
+}
+.textBlackLight
+{
+    color: #333232;
+}
+.textWhite
+{
+    color: #ffffff;
+}
+.textWhiteGrey
+{
+    color: #cecccc;
+}
+.textGreen
+{
+    color: #0fcf0f;
+}
+.textBlue
+{
+    color: #0085f0;
+}
