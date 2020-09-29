@@ -1,6 +1,6 @@
 "use strict";
 
-const events = require('./events');
+const events = require('./socket');
 const Server = require("http").Server;
 const Vorpal = require("vorpal");
 const app = new Vorpal();

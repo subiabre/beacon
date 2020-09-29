@@ -3,13 +3,13 @@
 const SocketModel = require("./models/socketModel");
 const UAParser = require('ua-parser-js');
 
-class Events
+class Socket
 {
     /**
      * Listen for events in the Socket.io server instance
      * @param {SocketIO.Server} io 
      */
-    server(io)
+    events(io)
     {
         let sockets;
 
@@ -102,4 +102,4 @@ class Events
     }
 }
 
-module.exports = new Events;
+module.exports = new Socket;
