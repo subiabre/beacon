@@ -11,7 +11,8 @@ class Socket
      */
     events(io)
     {
-        let sockets;
+        this.io = io;
+        this.sockets;
 
         io.on('connect', async (socket) => {
             let model = await this.getModel(socket);
@@ -21,25 +22,62 @@ class Socket
             }
 
             model = await this.connectModel(socket);
-            sockets = await this.getModelsOnline();
+            this.sockets = await this.getModelsOnline();
 
             io.emit('socket:update', sockets);
 
             socket.on('disconnect', async () => {
                 model = await this.disconnectModel(socket);
-                sockets = await this.getModelsOnline();
+                this.sockets = await this.getModelsOnline();
                 
                 io.emit('socket:update', sockets);
             });
 
             socket.on('socket:setTarget', async (socketTarget) => {
                 io.to(socketTarget).emit('socket:setOrigin', socket.id);
+
+                this.emitToAllBut([socket.id, socketTarget],'socket:isOrigin', socket.id);
+                this.emitToAllBut([socket.id, socketTarget],'socket:isTarget', socketTarget);
             });
 
             socket.on('socket:resetTarget', async (socketTarget) => {
                 io.to(socketTarget).emit('socket:resetOrigin', socket.id);
+
+                this.emitToAllBut([socket.id, socketTarget],'socket:isFree', socket.id);
+                this.emitToAllBut([socket.id, socketTarget],'socket:isFree', socketTarget);
             });
         });
+    }
+
+    /**
+     * Sends an event to every given socket but the specified one
+     * @param {Array} sockets List of ids of sockets to exclude from event
+     * @param {String} event Event to emit
+     * @param {Any} args Arguments to send
+     */
+    emitToAllBut(sockets, event, ...args)
+    {
+        this.sockets.forEach((target) => {
+            if (!sockets.includes(target.id)) {
+                this.io.to(target.id).emit(event, args);
+            }
+        });
+    }
+
+    /**
+     * Parses an User agent string
+     * @param {String} userAgent User agent as an string
+     * @returns {Object}
+     */
+    parseUserAgent(userAgent)
+    {
+        let ua = UAParser(userAgent);
+
+        if (typeof ua.device.type == "undefined") {
+            ua.device.type = "pc";
+        }
+
+        return ua;
     }
 
     async getModels()
@@ -71,22 +109,6 @@ class Socket
             })
             .then(model => model)
             .catch(err => console.log(err));
-    }
-
-    /**
-     * Parses an User agent string
-     * @param {String} userAgent User agent as an string
-     * @returns {Object}
-     */
-    parseUserAgent(userAgent)
-    {
-        let ua = UAParser(userAgent);
-
-        if (typeof ua.device.type == "undefined") {
-            ua.device.type = "pc";
-        }
-
-        return ua;
     }
 
     async connectModel(socket)
