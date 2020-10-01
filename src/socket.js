@@ -24,13 +24,13 @@ class Socket
             model = await this.connectModel(socket);
             this.sockets = await this.getModelsOnline();
 
-            io.emit('socket:update', sockets);
+            io.emit('socket:update', this.sockets);
 
             socket.on('disconnect', async () => {
                 model = await this.disconnectModel(socket);
                 this.sockets = await this.getModelsOnline();
                 
-                io.emit('socket:update', sockets);
+                io.emit('socket:update', this.sockets);
             });
 
             socket.on('socket:setTarget', async (socketTarget) => {
