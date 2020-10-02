@@ -9,6 +9,7 @@ const os = require('os');
 const fs = require('graceful-fs');
 const filetype = require('file-type');
 const mm = require('music-metadata');
+const path = require('path');
 const recursiveReadDir = require('recursive-readdir');
 const stratter = require('stratter');
 const SongModel = require('./models/songModel');
@@ -119,7 +120,7 @@ class AppCLI
                     meta: data
                 });
 
-                app.ui.redraw(`Reading from ${args.folder}. ${index}/${files.length} (${percentage}%)`);
+                app.ui.redraw(`Reading from ${path.normalize(args.folder)}. ${index}/${files.length} (${percentage}%)`);
             }
 
             callback();
