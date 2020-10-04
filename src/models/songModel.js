@@ -1,7 +1,7 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite:memory', {logging: false});
+const { DataTypes } = require('sequelize');
+const database = require('../sqlite');
 
-const Song = sequelize.define('Song', {
+const Song = database.define('Song', {
   file: {
       type: DataTypes.STRING,
       allowNull: false
@@ -12,6 +12,6 @@ const Song = sequelize.define('Song', {
   }
 });
 
-Song.sync({ force: true });
+Song.sync();
 
 module.exports = Song;

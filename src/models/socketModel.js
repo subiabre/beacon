@@ -1,7 +1,7 @@
-const { Sequelize, DataTypes } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:', {logging: false});
+const { DataTypes } = require('sequelize');
+const database = require('../sqlite');
 
-const Socket = sequelize.define('Socket', {
+const Socket = database.define('Socket', {
   id: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -27,6 +27,6 @@ const Socket = sequelize.define('Socket', {
   }
 });
 
-Socket.sync({ force: true });
+Socket.sync();
 
 module.exports = Socket;
