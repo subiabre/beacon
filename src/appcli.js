@@ -94,9 +94,9 @@ class AppCLI
 
     data()
     {
-        app.command('import <folder>', 'Import music from the given folder.')
+        app.command('import <folder...>', 'Import music from the given folder.')
         .action(async (args, callback) => {
-            let folder = path.resolve(args.folder);
+            let folder = path.resolve(args.folder.join(' '));
             let folderExists = fs.existsSync(folder);
 
             if (!folderExists) {
@@ -107,7 +107,7 @@ class AppCLI
             let files = await recursiveReadDir(folder);
             
             for (let index = 0; index < files.length; index++) {
-                let percentage = Math.round(index * 100 / files.length);
+                let percentage = Math.ceil(index * 100 / files.length);
                 
                 app.ui.redraw(`Reading from ${folder}. ${index}/${files.length} (${percentage}%)`);
 
@@ -129,6 +129,7 @@ class AppCLI
                 });
             }
 
+            app.ui.redraw(`Imported ${files.length} files from ${folder}.`);
             callback();
         });
     }
