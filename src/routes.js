@@ -17,4 +17,10 @@ router.get('/songs/last', async (req, res) => {
     res.send({data: songs});
 });
 
+router.get('/songs/all', async (req, res) => {
+    let songs = await Song.findAll();
+
+    res.send(songs);
+});
+
 module.exports = router;
