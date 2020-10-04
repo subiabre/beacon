@@ -14,6 +14,8 @@ const recursiveReadDir = require('recursive-readdir');
 const stratter = require('stratter');
 const SongModel = require('./models/songModel');
 
+const errortitle = stratter('Error', { foreground: "red" });
+
 class AppCLI
 {
     constructor()
@@ -98,7 +100,7 @@ class AppCLI
             let folderExists = fs.existsSync(folder);
 
             if (!folderExists) {
-                app.log(folder + 'is not a directory.');
+                app.log(`${errortitle}: ${folder} is not a directory.`);
             }
 
             let files = await recursiveReadDir(folder);
@@ -117,7 +119,7 @@ class AppCLI
 
                 let data = await mm.parseFile(file)
                     .catch(err => {
-                        app.log(`Error: could not read metadata of ${file}`);
+                        app.log(`${errortitle}: could not read metadata of ${file}`);
                     });
 
                 await SongModel.create({
