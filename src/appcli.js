@@ -101,6 +101,7 @@ class AppCLI
 
             if (!folderExists) {
                 app.log(`${errortitle}: ${folder} is not a directory.`);
+                callback();
             }
 
             let files = await recursiveReadDir(folder);
