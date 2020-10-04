@@ -94,16 +94,20 @@ class AppCLI
     {
         app.command('import <folder>', 'Import music from the given folder.')
         .action(async (args, callback) => {
-            let folderExists = fs.existsSync(args.folder);
+            let folder = path.resolve(args.folder);
+            let folderExists = fs.existsSync(folder);
 
             if (!folderExists) {
-                app.log(args.folder + 'is not a directory.');
+                app.log(folder + 'is not a directory.');
             }
 
-            let files = await recursiveReadDir(args.folder);
+            let files = await recursiveReadDir(folder);
             
             for (let index = 0; index < files.length; index++) {
                 let percentage = Math.round(index * 100 / files.length);
+                
+                app.ui.redraw(`Reading from ${folder}. ${index}/${files.length} (${percentage}%)`);
+
                 let file = files[index];
                 let type = await filetype.fromFile(file);
 
@@ -115,12 +119,11 @@ class AppCLI
                     .catch(err => {
                         app.log(`Error: could not read metadata of ${file}`);
                     });
+
                 await SongModel.create({
                     file: file,
                     meta: data
                 });
-
-                app.ui.redraw(`Reading from ${path.normalize(args.folder)}. ${index}/${files.length} (${percentage}%)`);
             }
 
             callback();
