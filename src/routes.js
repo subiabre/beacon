@@ -8,19 +8,22 @@ router.get('/', (req, res) => {
     res.sendFile(__dirname + '/client/index.html');
 });
 
-router.get('/songs/last', async (req, res) => {
-    let songs = await Song.findAll({
-        limit: 4,
+router.get('/songs/latest', async (req, res) => {
+    let songs = await Song.findOne({
         order: [[ 'createdAt', 'DESC' ]]
     });
 
-    res.send({data: songs});
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json({data: songs});
 });
 
 router.get('/songs/all', async (req, res) => {
     let songs = await Song.findAll();
 
-    res.send(songs);
+    res.setHeader('Content-Type', 'application/json');
+    res.status(200).json({data: songs});
 });
+
+
 
 module.exports = router;
