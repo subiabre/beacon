@@ -110,10 +110,10 @@ class AppCLI
                 let percentage = Math.ceil(index * 100 / files.length);
                 
                 app.ui.redraw(`Reading from ${folder}. ${index}/${files.length} (${percentage}%)`);
-                this.saveSong(files[index]);
+                await this.saveSong(files[index]);
             }
 
-            app.ui.redraw(`Imported ${files.length} files from ${folder}.`);
+            app.ui.redraw(`Scannned ${files.length} files from ${folder}.`);
             callback();
         });
     }
@@ -122,12 +122,12 @@ class AppCLI
      * Maps a song file to a database record
      * @param {String} file Path to file
      */
-    saveSong(file)
+    async saveSong(file)
     {
         let type = await filetype.fromFile(file);
 
         if (!type || !type.mime.match(/audio\/.*/)) {
-            continue;
+            return;
         }
 
         let data = await mm.parseFile(file)
@@ -135,7 +135,7 @@ class AppCLI
                 app.log(`${errortitle}: could not read metadata of ${file}`);
             });
 
-        await SongModel.create({
+        return await SongModel.create({
             file: file,
             meta: data
         });
