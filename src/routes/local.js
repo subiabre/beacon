@@ -2,13 +2,13 @@
 
 const express = require('express');
 const router = express.Router();
-const Song = require('./models/songModel');
+const Song = require('../models/songModel');
 
 router.get('/', (req, res) => {
     res.sendFile(__dirname + '/client/index.html');
 });
 
-router.get('/songs/latest', async (req, res) => {
+router.get('/api/local/latest', async (req, res) => {
     let songs = await Song.findOne({
         order: [[ 'createdAt', 'DESC' ]]
     });
@@ -17,13 +17,11 @@ router.get('/songs/latest', async (req, res) => {
     res.status(200).json({data: songs});
 });
 
-router.get('/songs/all', async (req, res) => {
+router.get('/api/local/all', async (req, res) => {
     let songs = await Song.findAll();
 
     res.setHeader('Content-Type', 'application/json');
     res.status(200).json({data: songs});
 });
-
-
 
 module.exports = router;
