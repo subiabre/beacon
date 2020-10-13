@@ -14,6 +14,13 @@ const getVideo = async (req) => {
     return await ytdl.getInfo(url);
 }
 
+router.get('/api/youtube/data/*', async (req, res) => {
+    let video = await getVideo(req);
+    
+    res.setHeader('Content-Type', 'application/json');
+    res.send({ data: video });
+});
+
 router.get('/api/youtube/video/*', async (req, res) => {
     let video = await getVideo(req);
     let videoFormat = ytdl.filterFormats(video.formats, 'videoandaudio')[0];

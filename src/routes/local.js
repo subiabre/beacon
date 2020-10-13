@@ -25,6 +25,15 @@ router.get('/api/local/all', async (req, res) => {
     res.status(200).json({data: songs});
 });
 
+router.get('/api/local/data/:id', async (req, res) => {
+    let song = await Song.findOne({
+        where: { id: req.params.id }
+    });
+
+    res.setHeader('Content-Type', 'application/json');
+    res.send({ data: song });
+});
+
 router.get('/api/local/audio/:id', async (req, res) => {
     let song = await Song.findOne({
         where: { id: req.params.id }
