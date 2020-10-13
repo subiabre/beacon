@@ -7,11 +7,18 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+    <!--Search Bar-->
     <form id="searchbar" class="Form" onsubmit="event.preventDefault(); handleSearch(event);">
-        <input id="searchinput" class="Input Text" type="text" autofocus>
-        <input type="submit" class="Input Submit">
+        <input id="searchinput" class="Input Text bgBlackLight textWhite" type="text" autofocus>
+        <input type="submit" class="Input Submit bgWhiteGrey">
     </form>
+    <!--/Search Bar-->
+
+    <!--Sockets List-->
     <ul id="sockets" class="List bgBlack textWhiteGrey"></ul>
+    <!--/SocketsList-->
+
+    <audio id="player" controls></audio>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="/client.js"></script>
