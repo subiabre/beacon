@@ -6,6 +6,10 @@ const Song = database.define('Song', {
       type: DataTypes.STRING,
       allowNull: false
   },
+  mime: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
   meta: {
     type: DataTypes.JSON,
     allowNull: true

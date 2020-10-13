@@ -13,6 +13,7 @@ const path = require('path');
 const recursiveReadDir = require('recursive-readdir');
 const stratter = require('stratter');
 const SongModel = require('./models/songModel');
+const { lookup } = require('mime-types');
 
 const errortitle = stratter('Error', { foreground: "red" });
 
@@ -137,6 +138,7 @@ class AppCLI
 
         return await SongModel.create({
             file: file,
+            mime: lookup(file),
             meta: data
         });
     }
