@@ -94,3 +94,41 @@
 {
     color: #0085f0;
 }
+
+/**
+ Positionables
+*/
+.posLeft
+{
+    float: left;
+}
+.posRight
+{
+    float: right;
+}
+
+/**
+ Forms
+*/
+.Form
+{
+    width: 100%;
+    display: flex;
+}
+
+.Input
+{
+    padding: 1em;
+    border: 0;
+    box-shadow: none;
+}
+.Input.Text
+{
+    width: 80%;
+    display: flow-root;
+}
+.Input.Submit
+{
+    width: 20%;
+    display: flow-root;
+}

@@ -7,6 +7,10 @@
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
+    <form id="searchbar" class="Form" onsubmit="event.preventDefault(); handleSearch(event);">
+        <input id="searchinput" class="Input Text" type="text" autofocus>
+        <input type="submit" class="Input Submit">
+    </form>
     <ul id="sockets" class="List bgBlack textWhiteGrey"></ul>
 
     <script src="/socket.io/socket.io.js"></script>
