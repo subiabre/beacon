@@ -56,6 +56,10 @@ Socket.on('socket:isFree', (socket) => {
     setIsFree(socket);
 });
 
+Socket.on('play:youtube', (url) => {
+    playYoutube(url);
+});
+
 /**
  * Execute a callback in every socket but the specified ones
  * @param {Closue} callback Function to execute
@@ -182,4 +186,43 @@ const resetTarget = (target) => {
 
     Target = Client;
     Socket.emit('socket:resetTarget', target);
+}
+
+const handleSearch = (event) => {
+    let query = document.getElementById('searchinput').value;
+
+    handleYoutube(query);
+
+    return false;
+}
+
+const handleYoutube = (url) => {
+    if (!url.match(/(https)?(\:\/\/)?(www\.)?youtu(\.)?be(\.com)?\//)) {
+        console.log('rejected youtube');
+    }
+
+    Socket.emit('play:youtube', Target, url);
+}
+
+const playYoutube = (url) => {
+    let req = new XMLHttpRequest();
+    
+    req.addEventListener('load', (event) => {
+        let req = event.target;
+        let video = JSON.parse(req.responseText).data;
+        let playerItem = document.getElementById('player');
+
+        playerItem.src = '/api/youtube/audio/' + video.videoDetails.video_url;
+        playerItem.pause();
+        playerItem.load();
+        playerItem.muted = true;
+        
+        let isPlaying = playerItem.play();
+        if (isPlaying !== undefined) {
+            playerItem.muted = false;
+        }
+    });
+
+    req.open('GET', '/api/youtube/data/' + url);
+    req.send();
 }

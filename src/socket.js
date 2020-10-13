@@ -46,6 +46,10 @@ class Socket
                 this.emitToAllBut([socket.id, socketTarget],'socket:isFree', socket.id);
                 this.emitToAllBut([socket.id, socketTarget],'socket:isFree', socketTarget);
             });
+
+            socket.on('play:youtube', async (target, url) => {
+                io.to(target).emit('play:youtube', url);
+            });
         });
     }
 
