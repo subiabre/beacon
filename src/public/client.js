@@ -3,68 +3,6 @@
 const Socket = io();
 
 /**
- * Id of this client socket
- */
-let Client;
-
-/**
- * Id of this client target
- */
-let Target;
-
-/**
- * Id of this client origin
- */
-let Origin;
-
-/**
- * List of connected sockets
- */
-let Sockets;
-
-Socket.on('connect', () => {
-    Client = Socket.id;
-    Target = Socket.id;
-});
-
-Socket.on('socket:update', (list) => {
-    Sockets = list;
-
-    updateSocketList(list);
-});
-
-Socket.on('socket:isClient', (client) => {
-    Target = client.targetId ? client.targetId : Client;
-    Origin = client.originId ? client.originId : Client;
-
-    updateClientSockets(client);
-});
-
-Socket.on('socket:setOrigin', (origin) => {
-    handleSetOrigin(origin);
-});
-
-Socket.on('socket:resetOrigin', (origin) => {
-    handleResetOrigin(origin);
-});
-
-Socket.on('socket:isOrigin', (socket) => {
-    setIsDisabled(socket);
-});
-
-Socket.on('socket:isTarget', (socket) => {
-    setIsDisabled(socket);
-});
-
-Socket.on('socket:isFree', (socket) => {
-    setIsFree(socket);
-});
-
-Socket.on('play:youtube', (url) => {
-    playYoutube(url);
-});
-
-/**
  * @param {SocketIO.Socket} socket
  * @returns {Boolean}
  */
@@ -285,3 +223,65 @@ const playYoutube = (url) => {
     req.open('GET', '/api/youtube/data/' + url);
     req.send();
 }
+
+/**
+ * Id of this client socket
+ */
+let Client;
+
+/**
+ * Id of this client target
+ */
+let Target;
+
+/**
+ * Id of this client origin
+ */
+let Origin;
+
+/**
+ * List of connected sockets
+ */
+let Sockets;
+
+Socket.on('connect', () => {
+    Client = Socket.id;
+    Target = Socket.id;
+});
+
+Socket.on('socket:update', (list) => {
+    Sockets = list;
+
+    updateSocketList(list);
+});
+
+Socket.on('socket:isClient', (client) => {
+    Target = client.targetId ? client.targetId : Client;
+    Origin = client.originId ? client.originId : Client;
+
+    updateClientSockets(client);
+});
+
+Socket.on('socket:setOrigin', (origin) => {
+    handleSetOrigin(origin);
+});
+
+Socket.on('socket:resetOrigin', (origin) => {
+    handleResetOrigin(origin);
+});
+
+Socket.on('socket:isOrigin', (socket) => {
+    setIsDisabled(socket);
+});
+
+Socket.on('socket:isTarget', (socket) => {
+    setIsDisabled(socket);
+});
+
+Socket.on('socket:isFree', (socket) => {
+    setIsFree(socket);
+});
+
+Socket.on('play:youtube', (url) => {
+    playYoutube(url);
+});
