@@ -39,8 +39,9 @@ class AppCLI
         app.command('start [port]', 'Starts the listening server.')
         .alias('up')
         .action((args, callback) => {
-            if (this.listener) {
-                server.close();
+            if (server.listening) {
+                app.log('Server is already open. Type "stop" to stop the server.');
+                return callback();
             }
 
             // Launch server
@@ -156,6 +157,7 @@ class AppCLI
                     id: model.dataValues.id,
                     userAgent: model.dataValues.userAgentOriginal,
                     online: model.dataValues.online,
+                    available: model.dataValues.available,
                     connectedAt: model.dataValues.connectedAt
                 }
             });
