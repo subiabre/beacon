@@ -20,6 +20,11 @@ const Socket = database.define('Socket', {
     allowNull: false,
     defaultValue: true
   },
+  available: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  },
   connectedAt: {
       type: DataTypes.TIME,
       allowNull: false,

@@ -36,14 +36,15 @@ class Socket
             socket.on('socket:setTarget', async (socketTarget) => {
                 io.to(socketTarget).emit('socket:setOrigin', socket.id);
 
+                await this.attachSockets(socket, socketTarget);
                 this.emitToAllBut([socket.id, socketTarget],'socket:isOrigin', socket.id);
                 this.emitToAllBut([socket.id, socketTarget],'socket:isTarget', socketTarget);
-                this.connectSockets(socket, socketTarget);
             });
 
             socket.on('socket:resetTarget', async (socketTarget) => {
                 io.to(socketTarget).emit('socket:resetOrigin', socket.id);
 
+                await this.dettachSockets(socket, socketTarget);
                 this.emitToAllBut([socket.id, socketTarget],'socket:isFree', socket.id);
                 this.emitToAllBut([socket.id, socketTarget],'socket:isFree', socketTarget);
             });
@@ -149,16 +150,40 @@ class Socket
      * @param {SocketIO.Socket} origin 
      * @param {SocketIO.Socket} target 
      */
-    async connectSockets(origin, target)
+    async attachSockets(origin, target)
     {
         let originModel = await this.getModel(origin);
         let targetModel = await SocketModel.findOne({ where: { id: target }});
 
         originModel.targetId = targetModel.id;
-        targetModel.originId = originModel.id;
-
+        originModel.available = false;
         await originModel.save();
+
+        targetModel.originId = originModel.id;
+        targetModel.available = false;
         await targetModel.save();
+
+        return;
+    }
+
+    /**
+     * Dettach two target and origin sockets
+     * @param {SocketIO.Socket} origin 
+     * @param {SocketIO.Socket} target 
+     */
+    async dettachSockets(origin, target)
+    {
+        let originModel = await this.getModel(origin);
+        let targetModel = await SocketModel.findOne({ where: { id: target }});
+
+        originModel.targetId = null;
+        originModel.available = true;
+        await originModel.save();
+
+        targetModel.originId = null;
+        targetModel.available = true;
+        await targetModel.save();
+
         return;
     }
 }
