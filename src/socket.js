@@ -25,6 +25,7 @@ class Socket
             this.sockets = await this.getModelsOnline();
 
             io.emit('socket:update', this.sockets);
+            io.to(socket.id).emit('socket:isClient', model);
 
             socket.on('disconnect', async () => {
                 model = await this.disconnectModel(socket);
