@@ -27,6 +27,8 @@ const Socket = database.define('Socket', {
   }
 });
 
-Socket.sync();
+Socket.sync({
+  force: true
+});
 
 module.exports = Socket;

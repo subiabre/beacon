@@ -6,14 +6,12 @@ const io = require('socket.io')(server);
 
 const socket = require('./src/socket');
 const appcli = require('./src/appcli');
-const local = require('./src/routes/local');
-const youtube = require('./src/routes/youtube');
 
 io.engine.generateId = require('./src/utils/socketid');
 
-app.use(express.static(__dirname + '/public'));
-app.use(local);
-app.use(youtube);
+app.use(express.static(__dirname + '/src/public'));
+app.use(require('./src/routes/youtube'));
+app.use(require('./src/routes/local'));
 
 socket.events(io);
 
