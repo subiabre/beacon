@@ -271,15 +271,15 @@ Socket.on('socket:resetOrigin', (origin) => {
 });
 
 Socket.on('socket:isOrigin', (socket) => {
-    setIsDisabled(socket);
+    socketItemSetDisabled(socket);
 });
 
 Socket.on('socket:isTarget', (socket) => {
-    setIsDisabled(socket);
+    socketItemSetDisabled(socket);
 });
 
 Socket.on('socket:isFree', (socket) => {
-    setIsFree(socket);
+    socketItemSetAvailable(socket);
 });
 
 Socket.on('play:youtube', (url) => {
