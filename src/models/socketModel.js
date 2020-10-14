@@ -27,6 +27,18 @@ const Socket = database.define('Socket', {
   }
 });
 
+Socket.hasOne(Socket, {
+  as: 'Target',
+  foreignKey: 'targetId',
+  allowNull: true
+});
+
+Socket.hasOne(Socket, {
+  as: 'Origin',
+  foreignKey: 'originId',
+  allowNull: true
+});
+
 Socket.sync({
   force: true
 });

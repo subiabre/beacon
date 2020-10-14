@@ -38,6 +38,7 @@ class Socket
 
                 this.emitToAllBut([socket.id, socketTarget],'socket:isOrigin', socket.id);
                 this.emitToAllBut([socket.id, socketTarget],'socket:isTarget', socketTarget);
+                this.connectSockets(socket, socketTarget);
             });
 
             socket.on('socket:resetTarget', async (socketTarget) => {
@@ -141,6 +142,24 @@ class Socket
             .save()
             .then(model => model)
             .catch(err => console.log(err));
+    }
+
+    /**
+     * Attach two target and origin sockets
+     * @param {SocketIO.Socket} origin 
+     * @param {SocketIO.Socket} target 
+     */
+    async connectSockets(origin, target)
+    {
+        let originModel = await this.getModel(origin);
+        let targetModel = await SocketModel.findOne({ where: { id: target }});
+
+        originModel.targetId = targetModel.id;
+        targetModel.originId = originModel.id;
+
+        await originModel.save();
+        await targetModel.save();
+        return;
     }
 }
 
