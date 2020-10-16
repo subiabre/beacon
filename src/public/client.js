@@ -133,6 +133,10 @@ const updateSocketList = async (sockets) => {
     }
 }
 
+/**
+ * Updates the sockets that the client was paired to
+ * @param {socketModel} client A socketModel instance
+ */
 const updateClientSockets = (client) => {
     if (client.targetId) {
         socketItemSetTarget(client.targetId);
