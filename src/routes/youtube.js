@@ -14,34 +14,55 @@ const getVideo = async (req) => {
     return await ytdl.getInfo(url);
 }
 
+/**
+ * Filter video formats and returns the highest quality format with known content length
+ * @param {ytdl.videoInfo} video 
+ * @param {String} filter 
+ */
+const getVideoFormat = async (video, filter) => {
+    let videoFormats = ytdl.filterFormats(video.formats, filter);
+    let format = videoFormats.filter((format) => {
+        return typeof format.contentLength !== 'undefined';
+    })[0];
+
+    return format;
+}
+
 router.get('/api/youtube/data/*', async (req, res) => {
     let video = await getVideo(req);
+    let data = {
+        title: video.videoDetails.title,
+        source: {
+            video: '/api/youtube/video/' + video.videoDetails.video_url,
+            audio: '/api/youtube/audio/' + video.videoDetails.video_url
+        }
+    };
     
     res.setHeader('Content-Type', 'application/json');
-    res.send({ data: video });
+    res.send(data);
 });
 
 router.get('/api/youtube/video/*', async (req, res) => {
     let video = await getVideo(req);
-    let videoFormat = ytdl.filterFormats(video.formats, 'videoandaudio')[0];
-
-    res.setHeader('Content-Type', videoFormat.mimeType);
-    res.setHeader('Content-Length', videoFormat.contentLength);
+    let format = await getVideoFormat(video, 'videoandaudio');
+    
+    res.setHeader('Content-Type', format.mimeType);
+    res.setHeader('Content-Length', format.contentLength);
     res.setHeader('Accept-Ranges', 'bytes');
 
-    ytdl(video.videoDetails.video_url, {format: videoFormat})
+    ytdl(video.videoDetails.video_url, {format: format})
         .pipe(res);
 });
 
 router.get('/api/youtube/audio/*', async (req, res) => {
     let video = await getVideo(req);
-    let audioFormat = ytdl.filterFormats(video.formats, 'audioonly')[0];
+    let format = await getVideoFormat(video, 'audioonly');
 
-    res.setHeader('Content-Type', audioFormat.mimeType);
-    res.setHeader('Content-Length', audioFormat.contentLength);
+    res.setHeader('Content-Type', format.mimeType);
+    res.setHeader('Content-Length', format.contentLength);
     res.setHeader('Accept-Ranges', 'bytes');
 
-    ytdl(video.videoDetails.video_url, {format: audioFormat})
+    ytdl(video.videoDetails.video_url, {format: format})
         .pipe(res);
 });
 
