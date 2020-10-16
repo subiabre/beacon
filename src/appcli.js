@@ -24,7 +24,7 @@ class AppCLI
         app.log('Welcome to beacon CLI. Type "help" to see available commands.');
 
         app
-            .delimiter(stratter(`beacon@${os.hostname()}`, { foreground: "blue" }) + ':')
+            .delimiter(stratter(`beacon@${os.hostname()}`, { foreground: "blue", background: "yellow" }) + ':')
             .show();
     }
 
