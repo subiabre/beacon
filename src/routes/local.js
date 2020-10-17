@@ -3,10 +3,11 @@
 const express = require('express');
 const fs = require('graceful-fs');
 const router = express.Router();
+const path = require('path');
 const Song = require('../models/songModel');
 
 router.get('/', (req, res) => {
-    res.sendFile(__dirname + '/client/index.html');
+    res.sendFile('index.html', { root: path.join(__dirname, '../../dist') });
 });
 
 router.get('/api/local/latest', async (req, res) => {
