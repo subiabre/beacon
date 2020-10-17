@@ -1,6 +1,7 @@
 "use strict";
 
 const SocketModel = require("./models/socketModel");
+const QueueModel = require("./models/queueModel");
 const UAParser = require('ua-parser-js');
 
 class Socket
@@ -16,16 +17,18 @@ class Socket
 
         io.on('connect', async (socket) => {
             let model = await this.getModel(socket);
+            let queue = await this.getQueue(socket);
 
             if (!model) {
                 model = await this.newModel(socket);
+                queue = await this.newQueue(socket);
             }
 
             model = await this.connectModel(socket);
             this.sockets = await this.getModelsOnline();
 
             io.emit('socket:update', this.sockets);
-            io.to(socket.id).emit('socket:isClient', model);
+            io.to(socket.id).emit('socket:isClient', model, queue);
 
             socket.on('disconnect', async () => {
                 model = await this.disconnectModel(socket);
@@ -186,6 +189,29 @@ class Socket
         await targetModel.save();
 
         return;
+    }
+
+    /**
+     * Gets the queue model from a socket
+     * @param {SocketModel} socket
+     */
+    async getQueue(model)
+    {
+        return await QueueModel.findOne({ where: { socketId: model.id }});
+    }
+
+    /**
+     * Add a new queue to database
+     * @param {SocketModel} socket 
+     */
+    async newQueue(model)
+    {
+        return await QueueModel
+            .create({
+                socketId: model.id
+            })
+            .then(model => model)
+            .catch(err => console.log(err));
     }
 }
 
