@@ -10,9 +10,8 @@ const Queue = database.define('Queue', {
     autoIncrement: true
   },
   items: {
-      type: DataTypes.JSON,
+      type: DataTypes.TEXT,
       allowNull: true,
-      defaultValue: {}
   }
 });
 
