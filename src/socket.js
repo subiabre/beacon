@@ -28,7 +28,8 @@ class Socket
             this.sockets = await this.getModelsOnline();
 
             io.emit('socket:update', this.sockets);
-            io.to(socket.id).emit('socket:isClient', model, queue);
+            io.to(socket.id).emit('socket:isClient', model);
+            io.to(socket.id).emit('queue:getQueue', queue);
 
             socket.on('disconnect', async () => {
                 model = await this.disconnectModel(socket);
@@ -51,6 +52,10 @@ class Socket
                 await this.dettachSockets(socket, socketTarget);
                 this.emitToAllBut([socket.id, socketTarget],'socket:isFree', socket.id);
                 this.emitToAllBut([socket.id, socketTarget],'socket:isFree', socketTarget);
+            });
+
+            socket.on('queue:addToQueue', (items) => {
+                this.addToQueue(socket, items);
             });
 
             socket.on('play:youtube', async (target, url) => {
@@ -195,23 +200,38 @@ class Socket
      * Gets the queue model from a socket
      * @param {SocketModel} socket
      */
-    async getQueue(model)
+    async getQueue(socket)
     {
-        return await QueueModel.findOne({ where: { socketId: model.id }});
+        let queue = await QueueModel.findOne({ where: { socketId: socket.id }});
+        
+        return queue;
     }
 
     /**
      * Add a new queue to database
      * @param {SocketModel} socket 
      */
-    async newQueue(model)
+    async newQueue(socket)
     {
-        return await QueueModel
+        await QueueModel
             .create({
-                socketId: model.id
+                socketId: socket.id
             })
             .then(model => model)
             .catch(err => console.log(err));
+
+        return await this.getQueue(socket);
+    }
+
+    async addToQueue(socket, items)
+    {
+        let model = await this.getQueue(socket);
+
+        model.items = items;
+        await model.save();
+
+        console.log(model);
+        return;
     }
 }
 
