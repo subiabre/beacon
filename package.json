@@ -6,7 +6,8 @@
   "main": "beacon.js",
   "scripts": {
     "test": "mocha --recursive --exit",
-    "nodemon": "nodemon beacon.js"
+    "nodemon": "nodemon beacon.js",
+    "postinstall": "npx webpack --config webpack.config.js"
   },
   "repository": {
     "type": "git",
