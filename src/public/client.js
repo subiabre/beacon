@@ -147,6 +147,54 @@ const updateClientSockets = (client) => {
     }
 };
 
+/**
+ * Makes an API call to the specified endpoint at the beacon server
+ * @param {String} endpoint 
+ * @param {Closure} callback 
+ */
+const fetchAPI = (endpoint, callback) => {
+    let req = new XMLHttpRequest();
+    
+    req.addEventListener('load', (event) => {
+        let req = event.target;
+        let res = JSON.parse(req.responseText);
+
+        callback(res);
+    });
+
+    req.open('GET', '/api' + endpoint);
+    req.send();
+}
+
+const clearInput = (input) => {
+    input.value = '';
+}
+
+const updatePlayer = (data) => {
+    let content = document.getElementById('content');
+    let contentTitle = document.getElementById('contenttitle');
+
+    contentTitle.innerHTML = data.title;
+    
+    content.pause();
+    content.src = data.source.video;
+    content.load();
+    content.play();
+}
+
+const handleSearch = (event) => {
+    let input = document.getElementById('searchinput');
+    let query = input.value;
+
+    if (query.match(/(https)?(\:\/\/)?(www\.)?youtu(\.)?be(\.com)?\//)) {
+        clearInput(input);
+
+        Socket.emit('play:youtube', Target, query);
+    }
+
+    return false;
+}
+
 const handleSetTarget = (event) => {
     let target = event.target.getAttribute('socketid');
 
@@ -189,43 +237,12 @@ const handleResetOrigin = (origin) => {
     }, [Client, origin]);
 }
 
-const handleSearch = (event) => {
-    let query = document.getElementById('searchinput').value;
+const handlePlayYoutube = (youtube) => {
+    let endpoint = '/youtube/data/' + youtube;
 
-    handleYoutube(query);
-
-    return false;
-}
-
-const handleYoutube = (url) => {
-    if (!url.match(/(https)?(\:\/\/)?(www\.)?youtu(\.)?be(\.com)?\//)) {
-        console.log('rejected youtube');
-    }
-
-    Socket.emit('play:youtube', Target, url);
-}
-
-const playYoutube = (url) => {
-    let req = new XMLHttpRequest();
-    
-    req.addEventListener('load', (event) => {
-        let req = event.target;
-        let video = JSON.parse(req.responseText).data;
-        let playerItem = document.getElementById('player');
-
-        playerItem.src = '/api/youtube/audio/' + video.videoDetails.video_url;
-        playerItem.pause();
-        playerItem.load();
-        playerItem.muted = true;
-        
-        let isPlaying = playerItem.play();
-        if (isPlaying !== undefined) {
-            playerItem.muted = false;
-        }
+    fetchAPI(endpoint, (data) => {
+        updatePlayer(data);
     });
-
-    req.open('GET', '/api/youtube/data/' + url);
-    req.send();
 }
 
 /**
@@ -287,5 +304,5 @@ Socket.on('socket:isFree', (socket) => {
 });
 
 Socket.on('play:youtube', (url) => {
-    playYoutube(url);
+    handlePlayYoutube(url);
 });
