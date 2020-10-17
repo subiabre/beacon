@@ -22,8 +22,8 @@ class SocketList
         });
         
         socket.on('socket:isClient', (client) => {
-            this.target = client.targetId ? client.targetId : this.client;
-            this.origin = client.originId ? client.originId : this.client;
+            this.target = client.targetId || this.client;
+            this.origin = client.originId || this.client;
         
             this.updateClientSockets(client);
         });
