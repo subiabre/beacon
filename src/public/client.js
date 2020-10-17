@@ -1,8 +1,10 @@
 import SocketList from './socketlist.js';
 import ApiRequest from './apirequest.js';
+import Queue from './queue.js';
 
 const socket = io();
 const sockets = new SocketList(socket);
+const queue = new Queue(socket);
 const apiRequest = new ApiRequest();
 
 const updatePlayer = (data) => {
@@ -22,9 +24,11 @@ const handleSearch = (event) => {
     let query = input.value;
 
     if (query.match(/(https)?(\:\/\/)?(www\.)?youtu(\.)?be(\.com)?\//)) {
-        //clearInput(input);
-
-        socket.emit('play:youtube', sockets.target, query);
+        input.value = '';
+        
+        apiRequest.youtube(query, (data) => {
+            queue.handleAddQueue(data);
+        });
     }
 
     return false;
