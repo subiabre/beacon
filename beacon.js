@@ -9,7 +9,7 @@ const appcli = require('./src/appcli');
 
 io.engine.generateId = require('./src/utils/socketid');
 
-app.use(express.static(__dirname + '/src/public'));
+app.use(express.static(__dirname + '/dist'));
 app.use(require('./src/routes/youtube'));
 app.use(require('./src/routes/local'));
 
