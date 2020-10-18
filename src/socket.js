@@ -229,8 +229,7 @@ class Socket
 
         model.items = items;
         await model.save();
-
-        console.log(model);
+        
         return;
     }
 }
