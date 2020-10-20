@@ -34,11 +34,15 @@ const handleSearch = (event) => {
     return false;
 }
 
-const handlePlayYoutube = (youtube) => {
-    apiRequest.youtube(youtube, (data) => {
-        updatePlayer(data);
-    });
+const handlePlay = () => {
+    socket.emit('play:youtube', sockets.target, queue.items[0]);
+    queue.handlePlay(queue.items[0]);
 }
 
+const handlePlayYoutube = (data) => {
+    updatePlayer(data);
+}
+
+window.handlePlay = handlePlay;
 window.handleSearch = handleSearch;
 window.handlePlayYoutube = handlePlayYoutube;
