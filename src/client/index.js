@@ -4,7 +4,7 @@ import Queue from './queue.js';
 
 const socket = io();
 const sockets = new SocketList(socket);
-const queue = new Queue(socket);
+const queue = new Queue(sockets);
 const apiRequest = new ApiRequest();
 
 const updatePlayer = (data) => {
@@ -35,7 +35,6 @@ const handleSearch = (event) => {
 }
 
 const handlePlay = () => {
-    socket.emit('play:youtube', sockets.target, queue.items[0]);
     queue.handlePlay(queue.items[0]);
 }
 

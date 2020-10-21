@@ -1,16 +1,17 @@
 class Queue
 {
-    constructor(socket)
+    constructor(sockets)
     {
-        this.socket = socket;
+        this.sockets = sockets;
         this.items = [];
+        this.isPlaying = null;
 
         this.handleAddQueue = this.handleAddQueue.bind(this);
         this.handlePlay = this.handlePlay.bind(this);
         this.handlePlayEvent = this.handlePlayEvent.bind(this);
         this.handleRemoveQueue = this.handleRemoveQueue.bind(this);
         
-        socket.on('queue:getQueue', (queue) => {
+        sockets.socket.on('queue:getQueue', (queue) => {
             this.queue = queue;
             this.updateQueue(JSON.parse(queue.items) || []);
         });
@@ -47,6 +48,7 @@ class Queue
     {
         let item = this.getItem(data.index);
 
+        item.setAttribute('class', 'bgWhiteGrey textBlack');
         item.setAttribute('title', 'Play this song.');
         item.addEventListener('click', this.handlePlayEvent);
     }
@@ -57,6 +59,7 @@ class Queue
 
         item.setAttribute('class', 'bgWhite textGreen');
         item.setAttribute('title', 'Currently playing.');
+        item.removeEventListener('click', this.handlePlayEvent);
     }
 
     /**
@@ -106,7 +109,11 @@ class Queue
 
     handlePlay(data)
     {
+        if (this.isPlaying) this.setIsPlayable(this.isPlaying);
+
         this.setIsPlaying(data);
+        this.isPlaying = data;
+        this.sockets.socket.emit('play:youtube', this.sockets.target, data);
     }
 
     handlePlayEvent(event)
@@ -122,13 +129,13 @@ class Queue
     handleAddQueue(data)
     {
         this.addToQueue(data);
-        this.socket.emit('queue:addToQueue', JSON.stringify(this.items));
+        this.sockets.socket.emit('queue:addToQueue', JSON.stringify(this.items));
     }
 
     handleRemoveQueue(data)
     {
         this.removeFromQueue(data);
-        this.socket.emit('queue:addToQueue', JSON.stringify(this.items));
+        this.sockets.socket.emit('queue:addToQueue', JSON.stringify(this.items));
     }
 }
 
