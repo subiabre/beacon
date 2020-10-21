@@ -6,6 +6,8 @@ class Queue
         this.items = [];
 
         this.handleAddQueue = this.handleAddQueue.bind(this);
+        this.handlePlay = this.handlePlay.bind(this);
+        this.handlePlayEvent = this.handlePlayEvent.bind(this);
         this.handleRemoveQueue = this.handleRemoveQueue.bind(this);
         
         socket.on('queue:getQueue', (queue) => {
@@ -27,18 +29,26 @@ class Queue
 
     /**
      * Create a list item from a queue item
-     * @param {Object} queue 
+     * @param {Object} data
      * @param {Number} index
      */
-    newItem(queue, index)
+    newItem(data, index)
     {
         let item = document.createElement('li');
 
         item.setAttribute('id', '#queue' + index);
         item.setAttribute('queueindex', index);
-        item.innerText = `${queue.title}`;
+        item.innerText = `${data.title}`;
 
         return item;
+    }
+
+    setIsPlayable(data)
+    {
+        let item = this.getItem(data.index);
+
+        item.setAttribute('title', 'Play this song.');
+        item.addEventListener('click', this.handlePlayEvent);
     }
 
     setIsPlaying(data)
@@ -60,12 +70,12 @@ class Queue
         let list = document.getElementById('queue');
         let item = this.newItem(data, index);
 
+        list.appendChild(item);
+
         data.index = index;
         this.items.push(data);
 
-        console.log(this.items);
-
-        list.appendChild(item);        
+        this.setIsPlayable(data);
     }
 
     removeFromQueue(data)
@@ -97,6 +107,16 @@ class Queue
     handlePlay(data)
     {
         this.setIsPlaying(data);
+    }
+
+    handlePlayEvent(event)
+    {
+        let index = event.target.getAttribute('queueindex');
+        let data = this.items.filter(item => {
+            return item.index == index;
+        })[0];
+
+        this.handlePlay(data);
     }
 
     handleAddQueue(data)
