@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>beacon</title>
+    <title>Castor</title>
     <meta name="viewport" content="width=device-width, user-scalable=no">
     <link rel="stylesheet" href="/styles.css">
 </head>
@@ -16,14 +16,16 @@
 
     <!--Sockets List-->
     <ul id="sockets" class="List bgBlack textWhiteGrey"></ul>
-    <!--/SocketsList-->
+    <!--/Sockets List-->
 
+    <!--Queue List-->
     <ul id="queue" class="List bgWhiteGrey textBlack"></ul>
+    <!--/Queue List-->
 
+    <!--Video playing-->
     <video id="content"></video>
-    <div>
-        <h1 id="contenttitle"></h1>
-    </div>
+    <h1 id="contenttitle"></h1>
+    <!--/Video playing-->
 
     <script src="/socket.io/socket.io.js"></script>
     <script type="module" src="/client.js"></script>
