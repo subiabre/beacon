@@ -3,6 +3,7 @@
 const Cookies = require('cookies');
 const uuid = require('short-uuid');
 const database = require('./sockets-db-service')
+const logger = require('../service/logger')
 
 const preserveId = (req, res) =>
 {
@@ -50,6 +51,8 @@ const eventListener = (io) =>
         await database.connectModel(socket);
         let list = await database.getModelsOnline();
 
+        logger.debug(`Socket.io connection with id: ${model.id}`)
+
         io.emit('socket:update', list);
         io.to(socket.id).emit('socket:isClient', model);
         io.to(socket.id).emit('queue:getQueue', queue);
@@ -62,6 +65,7 @@ const eventListener = (io) =>
         });
 
         socket.on('socket:setTarget', async (target) => {
+            logger.debug(`Socket ${model.id} setTarget`)
             io.to(target).emit('socket:setOrigin', socket.id);
 
             await database.attachSockets(socket, target);
@@ -70,6 +74,7 @@ const eventListener = (io) =>
         });
 
         socket.on('socket:resetTarget', async (target) => {
+            logger.debug(`Socket ${model.id} resetTarget`)
             io.to(target).emit('socket:resetOrigin', socket.id);
 
             await database.dettachSockets(socket, target);

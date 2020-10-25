@@ -3,8 +3,15 @@
  */
 class SocketList
 {
+    /**
+     * 
+     * @param {SocketIO.Socket} socket 
+     */
     constructor(socket)
     {
+        /**
+         * @param {Socket}
+         */
         this.socket = socket;
         
         this.handleSetTarget = this.handleSetTarget.bind(this);
@@ -208,6 +215,8 @@ class SocketList
 
         if (this.target !== this.client) {
             this.setAvailable(this.target);
+            this.socket.emit('socket:resetTarget', this.target)
+            console.log('reset old target')
         }
 
         this.setTarget(target);
@@ -241,6 +250,7 @@ class SocketList
     {
         this.origin = this.client;
 
+        console.log('reset origin received')
         this.setAvailable(origin);
 
         this.forEachSocketBut((socket) => {

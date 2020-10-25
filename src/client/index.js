@@ -1,4 +1,4 @@
-import SocketList from './component/socket/list.js';
+import SocketList from './component/socket-list.js';
 import Queue from './component/queue.js';
 import api from './service/api.js';
 
