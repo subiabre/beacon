@@ -30,7 +30,7 @@ class SearchBar extends EventEmitter
             input.value = '';
             
             api.youtube(query, (data) => {
-                this.emit('search:getData', data);
+                this.emit('queue:getData', data);
             });
         }
     

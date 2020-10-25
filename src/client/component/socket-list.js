@@ -17,6 +17,11 @@ class SocketList
         this.handleSetTarget = this.handleSetTarget.bind(this);
         this.handleResetTarget = this.handleResetTarget.bind(this);
 
+        this.socketEvents(socket);
+    }
+
+    socketEvents(socket)
+    {
         socket.on('connect', () => {
             this.client = socket.id;
             this.target = socket.id;
@@ -54,10 +59,6 @@ class SocketList
 
         socket.on('socket:isFree', (socket) => {
             this.setAvailable(socket);
-        });
-
-        socket.on('play:youtube', (url) => {
-            handlePlayYoutube(url);
         });
     }
 

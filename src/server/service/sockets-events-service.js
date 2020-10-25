@@ -86,8 +86,8 @@ const eventListener = (io) =>
             database.addToQueue(socket, items);
         });
 
-        socket.on('play:youtube', async (target, url) => {
-            io.to(target).emit('play:youtube', url);
+        socket.on('queue:play', async (target, data) => {
+            io.to(target).emit('play:getData', data);
         });
     });
 }

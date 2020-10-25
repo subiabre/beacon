@@ -7,6 +7,10 @@ const search = new SearchBar();
 const sockets = new SocketList(socket);
 const queue = new Queue(sockets, search);
 
+socket.on('play:getData', (url) => {
+    updatePlayer(url);
+});
+
 const updatePlayer = (data) => {
     let content = document.getElementById('content');
     let contentTitle = document.getElementById('contenttitle');
@@ -18,14 +22,3 @@ const updatePlayer = (data) => {
     content.load();
     content.play();
 }
-
-const handlePlay = () => {
-    queue.handlePlay(queue.items[0]);
-}
-
-const handlePlayYoutube = (data) => {
-    updatePlayer(data);
-}
-
-window.handlePlay = handlePlay;
-window.handlePlayYoutube = handlePlayYoutube;
