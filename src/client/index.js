@@ -1,11 +1,10 @@
-import SocketList from './socketlist.js';
-import ApiRequest from './apirequest.js';
-import Queue from './queue.js';
+import SocketList from './component/socket/list.js';
+import Queue from './component/queue.js';
+import api from './service/api.js';
 
 const socket = io();
 const sockets = new SocketList(socket);
 const queue = new Queue(sockets);
-const apiRequest = new ApiRequest();
 
 const updatePlayer = (data) => {
     let content = document.getElementById('content');
@@ -26,7 +25,7 @@ const handleSearch = (event) => {
     if (query.match(/(https)?(\:\/\/)?(www\.)?youtu(\.)?be(\.com)?\//)) {
         input.value = '';
         
-        apiRequest.youtube(query, (data) => {
+        api.youtube(query, (data) => {
             queue.handleAddQueue(data);
         });
     }

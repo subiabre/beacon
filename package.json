@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "start": "npm-run-all --parallel watch:server watch:client",
+    "watch:server": "nodemon src/server | bunyan -l debug",
+    "watch:client": "webpack --watch"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/subiabre/castor.git"

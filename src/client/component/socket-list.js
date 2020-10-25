@@ -163,11 +163,11 @@ class SocketList
                 continue;
             }
 
-            if (socket.available) {
+            if (socket.isAvailable) {
                 this.setAvailable(socket.id);
             }
 
-            if (!socket.available) {
+            if (!socket.isAvailable) {
                 this.setDisabled(socket.id);
             }
         }

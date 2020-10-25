@@ -1,11 +1,8 @@
 # Dependencies
 node_modules/
 
-# Local environment
-.env
-
 # SQLite database
-memory
+.local.sqlite
 
 # Webpack files
-dist/*js
+public/*js

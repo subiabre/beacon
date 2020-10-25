@@ -1,7 +1,7 @@
 const { DataTypes } = require('sequelize');
-const database = require('../sqlite');
+const database = require('../service/database');
 
-const Socket = database.define('Socket', {
+const Socket = database.define('socket', {
   id: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -11,16 +11,12 @@ const Socket = database.define('Socket', {
       type: DataTypes.JSON,
       allowNull: true
   },
-  userAgentOriginal: {
-    type: DataTypes.STRING,
-    allowNull: false
-  },
-  online: {
+  isOnline: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true
   },
-  available: {
+  isAvailable: {
     type: DataTypes.BOOLEAN,
     allowNull: false,
     defaultValue: true
@@ -33,14 +29,12 @@ const Socket = database.define('Socket', {
 });
 
 Socket.hasOne(Socket, {
-  as: 'Target',
-  foreignKey: 'targetId',
+  as: 'target',
   allowNull: true
 });
 
 Socket.hasOne(Socket, {
-  as: 'Origin',
-  foreignKey: 'originId',
+  as: 'origin',
   allowNull: true
 });
 
