@@ -23,6 +23,7 @@
   "homepage": "https://github.com/subiabre/castor#readme",
   "dependencies": {
     "bunyan": "^1.8.14",
+    "bunyan-express-serializer": "^1.0.0",
     "cookies": "^0.8.0",
     "express": "^4.17.1",
     "file-type": "^15.0.1",

@@ -1,7 +1,7 @@
 "use strict";
 
 const { Sequelize } = require('sequelize');
-const logger = require('./logger')
+const logger = require('./logger').child({id: 'Sequelize'})
 
 /**
  * Default Sequelize + SQLite db

@@ -10,6 +10,8 @@ const io = require('socket.io')(server);
 const socket = require('./service/sockets-events-service');
 const logger = require('./service/logger');
 
+app.use(require('./service/logger-express').request);
+app.use(require('./service/logger-express').error);
 app.use(express.static(path.join(__dirname, '../../public')));
 app.use(require('./routes/youtube'));
 app.use(require('./routes/local'));
