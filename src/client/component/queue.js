@@ -13,7 +13,7 @@ class Queue
         
         sockets.socket.on('queue:getQueue', (queue) => {
             this.queue = queue;
-            this.updateQueue(JSON.parse(queue.items) || []);
+            this.updateQueue(queue.list.items || []);
         });
     }
 
@@ -129,13 +129,13 @@ class Queue
     handleAddQueue(data)
     {
         this.addToQueue(data);
-        this.sockets.socket.emit('queue:addToQueue', JSON.stringify(this.items));
+        this.sockets.socket.emit('queue:addToQueue', this.items);
     }
 
     handleRemoveQueue(data)
     {
         this.removeFromQueue(data);
-        this.sockets.socket.emit('queue:addToQueue', JSON.stringify(this.items));
+        this.sockets.socket.emit('queue:addToQueue', this.items);
     }
 }
 

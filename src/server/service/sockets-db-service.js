@@ -137,7 +137,8 @@ const newQueue = async (socket) =>
 {
     await QueueModel
         .create({
-            socketId: socket.id
+            socketId: socket.id,
+            list: {items: []}
         })
         .then(model => model)
         .catch(err => console.log(err));
@@ -149,9 +150,9 @@ const addToQueue = async (socket, items) =>
 {
     let model = await getQueue(socket);
 
-    model.items = items;
-    await model.save();
+    model.list = {items: items};
     
+    await model.save();
     return;
 }
 
