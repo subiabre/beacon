@@ -1,10 +1,11 @@
+import SearchBar from './component/search-bar.js';
 import SocketList from './component/socket-list.js';
 import Queue from './component/queue.js';
-import api from './service/api.js';
 
 const socket = io();
+const search = new SearchBar();
 const sockets = new SocketList(socket);
-const queue = new Queue(sockets);
+const queue = new Queue(sockets, search);
 
 const updatePlayer = (data) => {
     let content = document.getElementById('content');
@@ -18,21 +19,6 @@ const updatePlayer = (data) => {
     content.play();
 }
 
-const handleSearch = (event) => {
-    let input = document.getElementById('searchinput');
-    let query = input.value;
-
-    if (query.match(/(https)?(\:\/\/)?(www\.)?youtu(\.)?be(\.com)?\//)) {
-        input.value = '';
-        
-        api.youtube(query, (data) => {
-            queue.handleAddQueue(data);
-        });
-    }
-
-    return false;
-}
-
 const handlePlay = () => {
     queue.handlePlay(queue.items[0]);
 }
@@ -42,5 +28,4 @@ const handlePlayYoutube = (data) => {
 }
 
 window.handlePlay = handlePlay;
-window.handleSearch = handleSearch;
 window.handlePlayYoutube = handlePlayYoutube;

@@ -1,6 +1,6 @@
 class Queue
 {
-    constructor(sockets)
+    constructor(sockets, search)
     {
         this.sockets = sockets;
         this.items = [];
@@ -14,6 +14,10 @@ class Queue
         sockets.socket.on('queue:getQueue', (queue) => {
             this.queue = queue;
             this.updateQueue(queue.list.items || []);
+        });
+
+        search.on('search:getData', data => {
+            this.handleAddQueue(data);
         });
     }
 
