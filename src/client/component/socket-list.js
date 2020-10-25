@@ -191,7 +191,7 @@ class SocketList
         }
 
         if (client.originId) {
-            this.setOrigin(client.originId);
+            this.handleSetOrigin(client.originId);
         }
     }
 
