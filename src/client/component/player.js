@@ -14,9 +14,33 @@ class Player extends EventEmitter
 
     socketEvents(socket)
     {
+        socket.on('play:getInteraction', () => {
+            this.getInteraction();
+        });
+
         socket.on('play:getData', (data) => {
             this.updatePlayer(data);
         });
+    }
+
+    getInteraction()
+    {
+        let prompt = document.createElement('div');
+        let body = document.body;
+
+        prompt.setAttribute('class', 'Window bgBlackLight bgShadowBlack textWhite');
+        prompt.addEventListener('click', this.registerInteraction);
+        prompt.innerHTML = `Content playing is disabled until you interact with this window. Please click anywhere on this message to enable content playing.`;
+
+        body.appendChild(prompt);
+    }
+
+    registerInteraction(event)
+    {
+        let prompt = event.target;
+        let body = document.body;
+
+        body.removeChild(prompt);
     }
     
     updatePlayer(data)

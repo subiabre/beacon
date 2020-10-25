@@ -56,6 +56,7 @@ const eventListener = (io) =>
         io.emit('socket:update', list);
         io.to(socket.id).emit('socket:isClient', model);
         io.to(socket.id).emit('queue:getQueue', queue);
+        io.to(socket.id).emit('play:getInteraction');
 
         socket.on('disconnect', async () => {
             await database.disconnectModel(socket);

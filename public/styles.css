@@ -132,3 +132,19 @@
     width: 20%;
     display: flow-root;
 }
+
+.Window
+{
+    position: fixed;
+    width: 50vw;
+    min-width: 200px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1em;
+}
+
+.bgShadowBlack
+{
+    box-shadow: 0.5em 0.5em 0 #121312;
+}
