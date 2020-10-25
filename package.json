@@ -4,7 +4,10 @@
   "description": "",
   "private": true,
   "scripts": {
-    "start": "npm-run-all --parallel watch:server watch:client",
+    "start": "npm-run-all --parallel start:client start:server",
+    "start:server": "node src/server | bunyan -l info",
+    "start:client": "webpack",
+    "watch": "npm-run-all --parallel watch:client watch:server",
     "watch:server": "nodemon src/server | bunyan -l debug",
     "watch:client": "webpack --watch"
   },
