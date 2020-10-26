@@ -136,6 +136,11 @@
 {
     float: right;
 }
+.floatingBottom
+{
+    position: fixed;
+    bottom: 0;
+}
 
 /**
  Forms
