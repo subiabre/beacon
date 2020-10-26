@@ -1,4 +1,5 @@
 import EventEmitter from 'events';
+import time from 'hh-mm-ss';
 
 class Player extends EventEmitter
 {
@@ -22,11 +23,11 @@ class Player extends EventEmitter
         });
 
         socket.on('play:getData', (data) => {
-            this.updatePlayer(data);
+            this.updatePlayback(data);
         });
 
-        socket.on('play:getCurrentTime', time => {
-            console.log(time);
+        socket.on('play:getContent', content => {
+            this.updatePlayer(content);
         });
 
         socket.on('play:getEnded', () => {
@@ -53,11 +54,33 @@ class Player extends EventEmitter
 
         body.removeChild(prompt);
     }
-    
-    updatePlayer(data)
+
+    getContentVideo()
     {
-        let content = document.getElementById('content');
-        let contentTitle = document.getElementById('contenttitle');
+        return document.getElementById('content');
+    }
+
+    getContentTitle()
+    {
+        return document.getElementById('contenttitle');
+    }
+
+    updatePlayer(content)
+    {
+        let player = document.createElement('div');
+        let timeTotal = time.fromS(Math.round(content.duration));
+        let timeCurrent = time.fromS(Math.round(content.currentTime));
+
+        player.setAttribute('class', 'Input width100 floatingBottom bgBlack textWhite');
+        player.innerHTML = `${timeCurrent} / ${timeTotal}` ;
+
+        document.body.appendChild(player);
+    }
+    
+    updatePlayback(data)
+    {
+        let content = this.getContentVideo();
+        let contentTitle = this.getContentTitle();
     
         contentTitle.setAttribute('class', 'screenTitle textWhite')
         contentTitle.innerHTML = data.title;
@@ -74,10 +97,14 @@ class Player extends EventEmitter
 
     handleTimeUpdate()
     {
-        let content = document.getElementById('content');
+        let content = this.getContentVideo();
 
         this.contentTime = setInterval(() => {
-            this.socket.emit('play:setCurrentTime', content.currentTime);
+            this.socket.emit('play:setContent', {
+                currentTime: content.currentTime,
+                duration: content.duration,
+                volume: content.volume
+            });
         }, 1000);
     }
 
@@ -87,10 +114,14 @@ class Player extends EventEmitter
      */
     handleEnded()
     {
-        let content = document.getElementById('content');
+        let content = this.getContentVideo();
+        let contentTitle = this.getContentTitle();
 
         clearInterval(this.contentTime);
 
+        contentTitle.removeAttribute('class');
+
+        content.removeAttribute('class');
         content.removeEventListener('play', this.handleTimeUpdate);
         content.removeEventListener('ended', this.handleEnded);
         

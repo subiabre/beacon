@@ -95,11 +95,11 @@ const eventListener = (io) =>
             io.to(target).emit('play:getData', data);
         });
 
-        socket.on('play:setCurrentTime', async time => {
+        socket.on('play:setContent', async content => {
             let model = await database.getModel(socket);
 
-            logger.debug(`${socket.id} is telling time ${time} to ${model.originId}`);
-            io.to(model.originId).emit('play:getCurrentTime', time);
+            logger.debug(`${socket.id} is telling time ${content.currentTime} to ${model.originId}`);
+            io.to(model.originId).emit('play:getContent', content);
         });
 
         socket.on('play:setEnded', async () => {
