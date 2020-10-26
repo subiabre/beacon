@@ -84,7 +84,7 @@ const disconnectModel = async (socket) =>
 const attachSockets = async (origin, target) =>
 {
     let originModel = await getModel(origin);
-    let targetModel = await SocketModel.findOne({ where: { id: target }});
+    let targetModel = await getModel(target);
 
     originModel.targetId = targetModel.id;
     originModel.available = false;
@@ -105,7 +105,7 @@ const attachSockets = async (origin, target) =>
 const dettachSockets = async (origin, target) =>
 {
     let originModel = await getModel(origin);
-    let targetModel = await SocketModel.findOne({ where: { id: target }});
+    let targetModel = await getModel(target);
 
     originModel.targetId = null;
     originModel.available = true;

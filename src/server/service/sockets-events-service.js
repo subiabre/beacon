@@ -66,21 +66,25 @@ const eventListener = (io) =>
         });
 
         socket.on('socket:setTarget', async (target) => {
-            logger.debug(`Socket ${model.id} setTarget`)
-            io.to(target).emit('socket:setOrigin', socket.id);
+            target = list.filter(socket => socket.id == target ? socket : null)[0];
+
+            logger.debug(`${socket.id} has set ${target.id} as target`);
+            io.to(target.id).emit('socket:setOrigin', socket.id);
 
             await database.attachSockets(socket, target);
-            emitToAllBut([socket.id, target],'socket:isOrigin', socket.id);
-            emitToAllBut([socket.id, target],'socket:isTarget', target);
+            emitToAllBut([socket.id, target.id],'socket:isOrigin', socket.id);
+            emitToAllBut([socket.id, target.id],'socket:isTarget', target.id);
         });
 
         socket.on('socket:resetTarget', async (target) => {
-            logger.debug(`Socket ${model.id} resetTarget`)
-            io.to(target).emit('socket:resetOrigin', socket.id);
+            target = list.filter(socket => socket.id == target ? socket : null)[0];
+
+            logger.debug(`${socket.id} has reset ${target.id} as target`);
+            io.to(target.id).emit('socket:resetOrigin', socket.id);
 
             await database.dettachSockets(socket, target);
-            emitToAllBut([socket.id, target],'socket:isFree', socket.id);
-            emitToAllBut([socket.id, target],'socket:isFree', target);
+            emitToAllBut([socket.id, target.id],'socket:isFree', socket.id);
+            emitToAllBut([socket.id, target.id],'socket:isFree', target.id);
         });
 
         socket.on('queue:addToQueue', (items) => {
@@ -89,6 +93,20 @@ const eventListener = (io) =>
 
         socket.on('queue:play', async (target, data) => {
             io.to(target).emit('play:getData', data);
+        });
+
+        socket.on('play:setCurrentTime', async time => {
+            let model = await database.getModel(socket);
+
+            logger.debug(`${socket.id} is telling time ${time} to ${model.originId}`);
+            io.to(model.originId).emit('play:getCurrentTime', time);
+        });
+
+        socket.on('play:setEnded', async () => {
+            let model = await database.getModel(socket);
+            
+            logger.debug(`${socket.id} is telling playback ended to ${model.originId}`);
+            io.to(model.originId).emit('play:getEnded');
         });
     });
 }

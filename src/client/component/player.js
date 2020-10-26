@@ -9,6 +9,9 @@ class Player extends EventEmitter
         this.sockets = sockets;
         this.socket = sockets.socket;
 
+        this.handleTimeUpdate = this.handleTimeUpdate.bind(this);
+        this.handleEnded = this.handleEnded.bind(this);
+
         this.socketEvents(sockets.socket);
     }
 
@@ -20,6 +23,14 @@ class Player extends EventEmitter
 
         socket.on('play:getData', (data) => {
             this.updatePlayer(data);
+        });
+
+        socket.on('play:getCurrentTime', time => {
+            console.log(time);
+        });
+
+        socket.on('play:getEnded', () => {
+            console.log(`playback ended`);
         });
     }
 
@@ -52,12 +63,39 @@ class Player extends EventEmitter
         contentTitle.innerHTML = data.title;
         
         content.setAttribute('class', 'Screen screenContent75 bgBlack75');
+        content.addEventListener('play', this.handleTimeUpdate);
+        content.addEventListener('ended', this.handleEnded);
 
         content.pause();
         content.src = data.source.video;
         content.load();
         content.play();
-    }   
+    }
+
+    handleTimeUpdate()
+    {
+        let content = document.getElementById('content');
+
+        this.contentTime = setInterval(() => {
+            this.socket.emit('play:setCurrentTime', content.currentTime);
+        }, 1000);
+    }
+
+    /**
+     * 
+     * @param {HTMLElement} content 
+     */
+    handleEnded()
+    {
+        let content = document.getElementById('content');
+
+        clearInterval(this.contentTime);
+
+        content.removeEventListener('play', this.handleTimeUpdate);
+        content.removeEventListener('ended', this.handleEnded);
+        
+        this.socket.emit('play:setEnded');
+    }
 }
 
 export default Player;
