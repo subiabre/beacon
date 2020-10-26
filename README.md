@@ -1,6 +1,8 @@
 # Castor
 Castor is a web based, local network content player and remote controller.
 
+![Castor](./public/icons/castor.png)
+
 1. [About](#About)
 2. [Installation](#Installation)
 3. [Usage](#Usage)
