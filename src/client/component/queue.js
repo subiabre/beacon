@@ -66,7 +66,7 @@ class Queue extends EventEmitter
     {
         let item = this.getItem(data.index);
 
-        item.setAttribute('class', 'bgWhiteGrey textBlack');
+        item.setAttribute('class', 'bgWhite textBlack borderBottomGrey hoverWhiteGrey');
         item.setAttribute('title', 'Play this song.');
         item.addEventListener('click', this.handlePlayEvent);
     }
@@ -75,7 +75,7 @@ class Queue extends EventEmitter
     {
         let item = this.getItem(data.index);
 
-        item.setAttribute('class', 'bgWhite textGreen');
+        item.setAttribute('class', 'bgWhiteGrey textGreen');
         item.setAttribute('title', 'Currently playing.');
         item.removeEventListener('click', this.handlePlayEvent);
     }
