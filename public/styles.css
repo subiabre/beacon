@@ -37,6 +37,14 @@
 }
 
 /**
+ Decorations
+*/
+.borderBottomGrey
+{
+    border-bottom: 1px solid #121312cc;
+}
+
+/**
  Lists
 */
 .List
