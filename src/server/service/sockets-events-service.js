@@ -95,11 +95,32 @@ const eventListener = (io) =>
             io.to(target).emit('play:getData', data);
         });
 
-        socket.on('play:setContent', async content => {
+        socket.on('play:setContent', async (volume) => {
             let model = await database.getModel(socket);
 
-            logger.debug(`${socket.id} is telling time ${content.currentTime} to ${model.originId}`);
-            io.to(model.originId).emit('play:getContent', content);
+            logger.debug(`${socket.id} is telling volume ${volume} to ${model.originId}`);
+            io.to(model.originId).emit('play:getContent', volume);
+        });
+
+        socket.on('play:setTime', async (time, duration) => {
+            let model = await database.getModel(socket);
+
+            logger.debug(`${socket.id} is telling time ${time} of ${duration} to ${model.originId}`);
+            io.to(model.originId).emit('play:getTime', time, duration);
+        });
+
+        socket.on('play:setPlay', async () => {
+            let model = await database.getModel(socket);
+
+            logger.debug(`${socket.id} is telling ${model.targetId} to play content`);
+            io.to(model.targetId).emit('play:getPlay');
+        });
+
+        socket.on('play:setPause', async () => {
+            let model = await database.getModel(socket);
+
+            logger.debug(`${socket.id} is telling ${model.targetId} to pause content`);
+            io.to(model.targetId).emit('play:getPause');
         });
 
         socket.on('play:setEnded', async () => {
