@@ -64,7 +64,7 @@ class Player extends EventEmitter
 
         prompt.setAttribute('class', 'Window bgBlackLight shadowBlack textWhite width50');
         prompt.addEventListener('click', this.registerInteraction);
-        prompt.innerHTML = `Content playing is disabled until you interact with this window. Please click anywhere on this message to enable content playing.`;
+        prompt.innerHTML = `Content playing is disabled until you interact with this window. Please click anywhere on this message to enable content playing. If this does not work, please refresh this window.`;
 
         body.appendChild(prompt);
     }
