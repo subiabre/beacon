@@ -1,5 +1,6 @@
 import api from '../service/api.js';
 import EventEmitter from 'events';
+import Prompt from './prompt.js';
 
 class SearchBar extends EventEmitter
 {
@@ -30,7 +31,12 @@ class SearchBar extends EventEmitter
             input.value = '';
             
             api.youtube(query, (data) => {
-                this.emit('queue:getData', data);
+                if (data.status == 'error') {
+                    let prompt = new Prompt();
+                    prompt.open(data.error);
+                } else {
+                    this.emit('queue:getData', data);
+                }
             });
         }
     

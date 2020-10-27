@@ -1,5 +1,6 @@
 import EventEmitter from 'events';
 import seconds from 'hh-mm-ss';
+import Prompt from './prompt.js';
 
 class Player extends EventEmitter
 {
@@ -59,22 +60,9 @@ class Player extends EventEmitter
 
     getInteraction()
     {
-        let prompt = document.createElement('div');
-        let body = document.body;
+        let prompt = new Prompt();
 
-        prompt.setAttribute('class', 'Window bgBlackLight shadowBlack textWhite width50');
-        prompt.addEventListener('click', this.registerInteraction);
-        prompt.innerHTML = `Content playing is disabled until you interact with this window. Please click anywhere on this message to enable content playing. If this does not work, please refresh this window.`;
-
-        body.appendChild(prompt);
-    }
-
-    registerInteraction(event)
-    {
-        let prompt = event.target;
-        let body = document.body;
-
-        body.removeChild(prompt);
+        prompt.open('Content playing is disabled until you interact with this window. Please click anywhere on this message to enable content playing. If this does not work, please refresh this window.');
     }
 
     getContentVideo()

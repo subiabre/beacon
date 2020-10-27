@@ -11,6 +11,8 @@ const ytdl = require('ytdl-core');
 const getVideo = async (req) => {
     let url = ytdl.validateURL(req.params[0]) ? req.params[0] : 'https://youtu.be/' + req.query.v;
     
+    if (!url) return false;
+
     return await ytdl.getInfo(url);
 }
 
@@ -31,12 +33,20 @@ const getVideoFormat = async (video, filter) => {
 router.get('/api/youtube/data/*', async (req, res) => {
     let video = await getVideo(req);
     let data = {
+        status: "success",
         title: video.videoDetails.title,
         source: {
             video: '/api/youtube/video/' + video.videoDetails.video_url,
             audio: '/api/youtube/audio/' + video.videoDetails.video_url
         }
     };
+
+    if (!video) {
+        data = {
+        status: "error",
+        error: `Could not resolve video address of ${req.params[0]}`, 
+        };
+    }
     
     res.setHeader('Content-Type', 'application/json');
     res.send(data);
