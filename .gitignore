@@ -2,7 +2,7 @@
 node_modules/
 
 # SQLite database
-.local.sqlite
+.local.sqlite*
 
 # Webpack files
 public/client*
