@@ -92,42 +92,36 @@ const eventListener = (io) =>
         });
 
         socket.on('queue:play', async (target, data) => {
-            io.to(target).emit('play:getData', data);
+            io.to(target).emit('play:contentData', data);
         });
 
-        socket.on('play:setContent', async (volume) => {
-            let model = await database.getModel(socket);
-
-            logger.debug(`${socket.id} is telling volume ${volume} to ${model.originId}`);
-            io.to(model.originId).emit('play:getContent', volume);
+        socket.on('play:contentData', async (target, data) => {
+            io.to(target).emit('play:contentData', data);
         });
 
-        socket.on('play:setTime', async (time, duration) => {
-            let model = await database.getModel(socket);
-
-            logger.debug(`${socket.id} is telling time ${time} of ${duration} to ${model.originId}`);
-            io.to(model.originId).emit('play:getTime', time, duration);
+        socket.on('play:playerData', async (origin, data) => {
+            logger.debug(`${socket.id} is telling content data to ${origin}`);
+            io.to(origin).emit('play:playerData', data);
         });
 
-        socket.on('play:setPlay', async () => {
-            let model = await database.getModel(socket);
-
-            logger.debug(`${socket.id} is telling ${model.targetId} to play content`);
-            io.to(model.targetId).emit('play:getPlay');
+        socket.on('play:playerTime', async (origin, time, duration) => {
+            logger.debug(`${socket.id} is telling time ${time} of ${duration} to ${origin}`);
+            io.to(origin).emit('play:playerTime', time, duration);
         });
 
-        socket.on('play:setPause', async () => {
-            let model = await database.getModel(socket);
-
-            logger.debug(`${socket.id} is telling ${model.targetId} to pause content`);
-            io.to(model.targetId).emit('play:getPause');
+        socket.on('play:contentPlay', async (target) => {
+            logger.debug(`${socket.id} is telling ${target} to play content`);
+            io.to(target).emit('play:playbackPlay');
         });
 
-        socket.on('play:setEnded', async () => {
-            let model = await database.getModel(socket);
-            
-            logger.debug(`${socket.id} is telling playback ended to ${model.originId}`);
-            io.to(model.originId).emit('play:getEnded');
+        socket.on('play:contentPause', async (target) => {
+            logger.debug(`${socket.id} is telling ${target} to pause content`);
+            io.to(target).emit('play:playbackPause');
+        });
+
+        socket.on('play:playerEnd', async (origin) => {            
+            logger.debug(`${socket.id} is telling playback ended to ${origin}`);
+            io.to(origin).emit('play:playerEnd');
         });
     });
 }

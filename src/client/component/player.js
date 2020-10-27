@@ -13,6 +13,7 @@ class Player extends EventEmitter
         this.handleTimeUpdate = this.handleTimeUpdate.bind(this);
         this.handleEnded = this.handleEnded.bind(this);
         this.handlePlay = this.handlePlay.bind(this);
+        this.handlePlayReset = this.handlePlayReset.bind(this);
         this.handlePause = this.handlePause.bind(this);
 
         this.socketEvents(sockets.socket);
@@ -24,28 +25,30 @@ class Player extends EventEmitter
             this.getInteraction();
         });
 
-        socket.on('play:getData', (data) => {
+        socket.on('play:contentData', (data) => {
+            this.data = data;
             this.updatePlayback(data);
         });
 
-        socket.on('play:getContent', (time, duration, volume) => {
-            this.updatePlayer(time, duration, volume);
+        socket.on('play:playerData', (data) => {
+            this.data = data;
+            this.updatePlayer();
         });
 
-        socket.on('play:getTime', (time, duration) => {
+        socket.on('play:playerTime', (time, duration) => {
             this.updatePlayerTime(time, duration);
         });
 
-        socket.on('play:getPlay', () => {
+        socket.on('play:playbackPlay', () => {
             this.setPlaybackPlay();
         });
 
-        socket.on('play:getPause', () => {
+        socket.on('play:playbackPause', () => {
             this.setPlaybackPause();
         });
 
-        socket.on('play:getEnded', () => {
-            console.log(`playback ended`);
+        socket.on('play:playerEnd', () => {
+            this.updatePlayerEnded();
         });
     }
 
@@ -95,19 +98,24 @@ class Player extends EventEmitter
         return player;
     }
 
-    updatePlayer(volume)
+    updatePlayer()
     {
         let player = this.getPlayer() || this.newPlayer();
+        let pipe = document.createElement('span');
         let button = document.createElement('span');
         let time = document.createElement('span');
 
+        pipe.innerHTML = ' | ';
+
         button.innerHTML = 'Pause';
+        button.setAttribute('id', 'playerbutton');
         button.addEventListener('click', this.handlePause);
 
         time.setAttribute('id', 'playertime');
 
         player.innerHTML = '';
         player.appendChild(button);
+        player.appendChild(pipe);
         player.appendChild(time);
     }
 
@@ -118,6 +126,16 @@ class Player extends EventEmitter
         let time = document.getElementById('playertime');
 
         time.innerHTML = `${timeCurrent} / ${timeTotal}`;
+    }
+
+    updatePlayerEnded()
+    {
+        let button = document.getElementById('playerbutton');
+
+        button.innerHTML = 'Play';
+        button.removeEventListener('click', this.handlePause);
+        button.removeEventListener('click', this.handlePlay);
+        button.addEventListener('click', this.handlePlayReset);
     }
     
     updatePlayback(data)
@@ -136,16 +154,8 @@ class Player extends EventEmitter
         content.src = data.source.video;
         content.load();
         content.play();
-        
-        this.socket.emit('play:setContent', content.volume);
-    }
 
-    setPlaybackData(data)
-    {
-        let content = this.getContentVideo();
-
-        content.currentTime = data.currentTime;
-        content.volume = data.volume;
+        this.socket.emit('play:playerData', this.sockets.origin, data);
     }
 
     setPlaybackPlay()
@@ -170,7 +180,12 @@ class Player extends EventEmitter
         button.removeEventListener('click', this.handlePlay);
         button.addEventListener('click', this.handlePause);
 
-        this.socket.emit('play:setPlay');
+        this.socket.emit('play:contentPlay', this.sockets.target);
+    }
+
+    handlePlayReset()
+    {
+        this.socket.emit('play:contentData', this.sockets.target, this.data);
     }
 
     handlePause(event)
@@ -181,7 +196,7 @@ class Player extends EventEmitter
         button.removeEventListener('click', this.handlePause);
         button.addEventListener('click', this.handlePlay);
 
-        this.socket.emit('play:setPause');
+        this.socket.emit('play:contentPause', this.sockets.target);
     }
 
     handleTimeUpdate()
@@ -189,7 +204,7 @@ class Player extends EventEmitter
         let content = this.getContentVideo();
 
         this.contentTime = setInterval(() => {
-            this.socket.emit('play:setTime', content.currentTime, content.duration || 0);
+            this.socket.emit('play:playerTime', this.sockets.origin, content.currentTime, content.duration || 0);
         }, 1000);
     }
 
@@ -210,7 +225,7 @@ class Player extends EventEmitter
         content.removeEventListener('play', this.handleTimeUpdate);
         content.removeEventListener('ended', this.handleEnded);
         
-        this.socket.emit('play:setEnded');
+        this.socket.emit('play:playerEnd', this.sockets.origin);
     }
 }
 
