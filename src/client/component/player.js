@@ -14,6 +14,7 @@ class Player extends EventEmitter
         this.handleEnded = this.handleEnded.bind(this);
         this.handlePlay = this.handlePlay.bind(this);
         this.handlePlayReset = this.handlePlayReset.bind(this);
+        this.handleStop = this.handleStop.bind(this);
         this.handlePause = this.handlePause.bind(this);
 
         this.socketEvents(sockets.socket);
@@ -39,11 +40,15 @@ class Player extends EventEmitter
             this.updatePlayerTime(time, duration);
         });
 
-        socket.on('play:playbackPlay', () => {
+        socket.on('play:contentPlay', () => {
             this.setPlaybackPlay();
         });
 
-        socket.on('play:playbackPause', () => {
+        socket.on('play:contentStop', () => {
+            this.setPlaybackStop();
+        });
+
+        socket.on('play:contentPause', () => {
             this.setPlaybackPause();
         });
 
@@ -103,6 +108,7 @@ class Player extends EventEmitter
         let player = this.getPlayer() || this.newPlayer();
         let pipe = document.createElement('span');
         let button = document.createElement('span');
+        let stop = document.createElement('span');
         let time = document.createElement('span');
 
         pipe.innerHTML = ' | ';
@@ -111,11 +117,16 @@ class Player extends EventEmitter
         button.setAttribute('id', 'playerbutton');
         button.addEventListener('click', this.handlePause);
 
+        stop.innerHTML = 'Stop';
+        stop.addEventListener('click', this.handleStop);
+
         time.setAttribute('id', 'playertime');
 
         player.innerHTML = '';
         player.appendChild(button);
         player.appendChild(pipe);
+        player.appendChild(stop);
+        player.appendChild(pipe.cloneNode(true));
         player.appendChild(time);
     }
 
@@ -165,6 +176,15 @@ class Player extends EventEmitter
         content.play();
     }
 
+    setPlaybackStop()
+    {
+        let content = this.getContentVideo();
+
+        content.pause();
+        content.currentTime = 0;
+        this.handleEnded();
+    }
+
     setPlaybackPause()
     {
         let content = this.getContentVideo();
@@ -186,6 +206,11 @@ class Player extends EventEmitter
     handlePlayReset()
     {
         this.socket.emit('play:contentData', this.sockets.target, this.data);
+    }
+
+    handleStop()
+    {
+        this.socket.emit('play:contentStop', this.sockets.target);
     }
 
     handlePause(event)

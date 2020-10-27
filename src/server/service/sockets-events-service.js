@@ -111,12 +111,17 @@ const eventListener = (io) =>
 
         socket.on('play:contentPlay', async (target) => {
             logger.debug(`${socket.id} is telling ${target} to play content`);
-            io.to(target).emit('play:playbackPlay');
+            io.to(target).emit('play:contentPlay');
+        });
+
+        socket.on('play:contentStop', async (target) => {
+            logger.debug(`${socket.id} is telling ${target} to stop content`);
+            io.to(target).emit('play:contentStop');
         });
 
         socket.on('play:contentPause', async (target) => {
             logger.debug(`${socket.id} is telling ${target} to pause content`);
-            io.to(target).emit('play:playbackPause');
+            io.to(target).emit('play:contentPause');
         });
 
         socket.on('play:playerEnd', async (origin) => {            
