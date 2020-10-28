@@ -20,8 +20,9 @@
 */
 .width100
 {
-    width: 100vw;
+    width: calc(100vw - 2em);
     max-height: 100vw;
+    padding: 1em;
 }
 
 .width75
@@ -36,12 +37,21 @@
     max-width: 90vh;
 }
 
+.height5
+{
+    height: 5vh;
+}
+
 /**
  Decorations
 */
 .borderBottomGrey
 {
     border-bottom: 1px solid #121312cc;
+}
+.borderRight
+{
+    border-right: 5px solid #0085f0;
 }
 .padding
 {
