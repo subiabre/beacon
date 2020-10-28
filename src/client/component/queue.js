@@ -26,6 +26,10 @@ class Queue extends EventEmitter
             this.queue = queue;
             this.updateQueue(queue.list.items || []);
         });
+
+        socket.on('play:playerEnd', () => {
+            this.handlePlayNext();
+        });
     }
 
     searchEvents(search)
@@ -132,6 +136,16 @@ class Queue extends EventEmitter
         this.setIsPlaying(data);
         this.isPlaying = data;
         this.socket.emit('queue:play', this.sockets.target, data);
+    }
+
+    handlePlayNext()
+    {
+        let index = this.isPlaying.index + 1;
+        let data = this.items.filter(item => {
+            return item.index == index;
+        })[0];
+
+        this.handlePlay(data);
     }
 
     handlePlayEvent(event)

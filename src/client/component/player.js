@@ -269,7 +269,6 @@ class Player extends EventEmitter
         }, 1000);
 
         this.socket.emit('play:playerDuration', this.sockets.origin, content.duration);
-        console.log(content.duration);
     }
 
     /**
