@@ -104,9 +104,14 @@ const eventListener = (io) =>
             io.to(origin).emit('play:playerData', data);
         });
 
-        socket.on('play:playerTime', async (origin, time, duration) => {
-            logger.debug(`${socket.id} is telling time ${time} of ${duration} to ${origin}`);
-            io.to(origin).emit('play:playerTime', time, duration);
+        socket.on('play:playerTime', async (origin, time) => {
+            logger.debug(`${socket.id} is telling time ${time} to ${origin}`);
+            io.to(origin).emit('play:playerTime', time);
+        });
+
+        socket.on('play:playerDuration', async (origin, duration) => {
+            logger.debug(`${socket.id} is telling duration of ${duration} to ${origin}`);
+            io.to(origin).emit('play:playerDuration', duration);
         });
 
         socket.on('play:contentPlay', async (target) => {
@@ -117,6 +122,11 @@ const eventListener = (io) =>
         socket.on('play:contentStop', async (target) => {
             logger.debug(`${socket.id} is telling ${target} to stop content`);
             io.to(target).emit('play:contentStop');
+        });
+
+        socket.on('play:contentTime', async (target, time) => {
+            logger.debug(`${socket.id} is telling ${target} to play at ${time}`);
+            io.to(target).emit('play:contentTime', time);
         });
 
         socket.on('play:contentPause', async (target) => {

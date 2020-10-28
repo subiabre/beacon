@@ -17,6 +17,7 @@ class Player extends EventEmitter
         this.handlePlayReset = this.handlePlayReset.bind(this);
         this.handleStop = this.handleStop.bind(this);
         this.handlePause = this.handlePause.bind(this);
+        this.handleMoveTime = this.handleMoveTime.bind(this);
 
         this.socketEvents(sockets.socket);
     }
@@ -37,8 +38,12 @@ class Player extends EventEmitter
             this.updatePlayer();
         });
 
-        socket.on('play:playerTime', (time, duration) => {
-            this.updatePlayerTime(time, duration);
+        socket.on('play:playerTime', (time) => {
+            this.updatePlayerTime(time);
+        });
+
+        socket.on('play:playerDuration', (duration) => {
+            this.updatePlayerDuration(duration);
         });
 
         socket.on('play:contentPlay', () => {
@@ -47,6 +52,10 @@ class Player extends EventEmitter
 
         socket.on('play:contentStop', () => {
             this.setPlaybackStop();
+        });
+
+        socket.on('play:contentTime', (time) => {
+            this.setPlaybackTime(time);
         });
 
         socket.on('play:contentPause', () => {
@@ -98,6 +107,9 @@ class Player extends EventEmitter
         let button = document.createElement('span');
         let stop = document.createElement('span');
         let time = document.createElement('span');
+        
+        let bar = document.createElement('div');
+        let progressBar = document.createElement('div');
 
         pipe.innerHTML = ' | ';
 
@@ -110,21 +122,37 @@ class Player extends EventEmitter
 
         time.setAttribute('id', 'playertime');
 
+        progressBar.setAttribute('class', 'bgWhiteGrey height5 borderRight');
+
+        bar.setAttribute('id', 'playerbar');
+        bar.setAttribute('class', 'bgBlackLight height5');
+        bar.addEventListener('click', this.handleMoveTime);
+        bar.appendChild(progressBar);
+
         player.innerHTML = '';
         player.appendChild(button);
         player.appendChild(pipe);
         player.appendChild(stop);
         player.appendChild(pipe.cloneNode(true));
         player.appendChild(time);
+        player.appendChild(pipe.cloneNode(true));
+        player.appendChild(bar);
     }
 
-    updatePlayerTime(currentTime, duration)
+    updatePlayerDuration(duration)
     {
-        let timeTotal = seconds.fromS(Math.round(duration));
+        this.contentDuration = duration;
+    }
+
+    updatePlayerTime(currentTime)
+    {
+        let timeTotal = seconds.fromS(Math.round(this.contentDuration || 0));
         let timeCurrent = seconds.fromS(Math.round(currentTime));
         let time = document.getElementById('playertime');
+        let bar = document.getElementById('playerbar');
 
         time.innerHTML = `${timeCurrent} / ${timeTotal}`;
+        bar.firstChild.style.width = parseInt(currentTime * bar.offsetWidth / this.contentDuration) + 'px';
     }
 
     updatePlayerEnded()
@@ -146,7 +174,7 @@ class Player extends EventEmitter
         contentTitle.innerHTML = data.title;
         
         content.setAttribute('class', 'Screen screenContent75 bgBlack75');
-        content.addEventListener('play', this.handleTimeUpdate);
+        content.addEventListener('loadeddata', this.handleTimeUpdate);
         content.addEventListener('ended', this.handleEnded);
 
         content.pause();
@@ -171,6 +199,15 @@ class Player extends EventEmitter
         content.pause();
         content.currentTime = 0;
         this.handleEnded();
+    }
+
+    setPlaybackTime(time)
+    {
+        let content = this.getContentVideo();
+
+        content.pause();
+        content.currentTime = time;
+        content.play();
     }
 
     setPlaybackPause()
@@ -212,13 +249,27 @@ class Player extends EventEmitter
         this.socket.emit('play:contentPause', this.sockets.target);
     }
 
+    handleMoveTime(event)
+    {
+        let bar = document.getElementById('playerbar');
+        let mouseX = event.pageX - bar.offsetLeft;
+        let time = mouseX * this.contentDuration / bar.offsetWidth;
+
+        bar.firstChild.style.widht = mouseX + 'px';
+
+        this.socket.emit('play:contentTime', this.sockets.target, time);
+    }
+
     handleTimeUpdate()
     {
         let content = this.getContentVideo();
 
-        this.contentTime = setInterval(() => {
-            this.socket.emit('play:playerTime', this.sockets.origin, content.currentTime, content.duration || 0);
+        this.contentTimeInterval = setInterval(() => {
+            this.socket.emit('play:playerTime', this.sockets.origin, content.currentTime);
         }, 1000);
+
+        this.socket.emit('play:playerDuration', this.sockets.origin, content.duration);
+        console.log(content.duration);
     }
 
     /**
@@ -230,7 +281,7 @@ class Player extends EventEmitter
         let content = this.getContentVideo();
         let contentTitle = this.getContentTitle();
 
-        clearInterval(this.contentTime);
+        clearInterval(this.contentTimeInterval);
 
         contentTitle.removeAttribute('class');
 
