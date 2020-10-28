@@ -43,6 +43,10 @@
 {
     border-bottom: 1px solid #121312cc;
 }
+.padding
+{
+    padding: 1em;
+}
 
 /**
  Lists
@@ -149,6 +153,10 @@
     position: fixed;
     bottom: 0;
 }
+.centerVertical
+{
+    vertical-align: middle;
+}
 
 /**
  Forms
@@ -204,4 +212,9 @@
     position: fixed;
     left: 12.5vw;
     bottom: 1vh;
+}
+
+.scrollVertical
+{
+    overflow-y: scroll;
 }
