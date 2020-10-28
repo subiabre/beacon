@@ -1,7 +1,8 @@
 # Dependencies
 node_modules/
 
-# SQLite database
+# Environment files
+.env
 .local.sqlite*
 
 # Webpack files
