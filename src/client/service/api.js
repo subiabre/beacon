@@ -23,7 +23,13 @@ const youtube = (video, callback) =>
     fetch('/youtube/data/' + video, callback);
 }
 
+const youtubeSearch = (query, callback) =>
+{
+    fetch('/youtube/search/' + query, callback);
+}
+
 export default {
     fetch,
-    youtube
+    youtube,
+    youtubeSearch
 };
