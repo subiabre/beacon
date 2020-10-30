@@ -44,6 +44,22 @@ const eventListener = (io) =>
         });
     }
 
+    /**
+     * Return a socket from the list or false if not found
+     * @param {Array} list List of sockets
+     * @param {String} needle Id of socket to return
+     */
+    const getFromList = async (list, needle) =>
+    {
+        let result = list.filter(socket => {
+            if (socket.id == needle) return socket
+        })[0];
+
+        if (typeof result == 'undefined') return false;
+
+        return result;
+    }
+
     io.on('connect', async (socket) => {
         let model = await database.getModel(socket) || await database.newModel(socket);
         let queue = await database.getQueue(socket) || await database.newQueue(socket);
@@ -66,7 +82,7 @@ const eventListener = (io) =>
         });
 
         socket.on('socket:setTarget', async (target) => {
-            target = list.filter(socket => socket.id == target ? socket : null)[0];
+            target = await getFromList(list, target) || model;
 
             logger.debug(`${socket.id} has set ${target.id} as target`);
             io.to(target.id).emit('socket:setOrigin', socket.id);
@@ -77,7 +93,7 @@ const eventListener = (io) =>
         });
 
         socket.on('socket:resetTarget', async (target) => {
-            target = list.filter(socket => socket.id == target ? socket : null)[0];
+            target = await getFromList(list, target) || model;
 
             logger.debug(`${socket.id} has reset ${target.id} as target`);
             io.to(target.id).emit('socket:resetOrigin', socket.id);
