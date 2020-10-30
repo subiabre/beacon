@@ -69,10 +69,7 @@ const getVideoFormat = async (video, filter) => {
 
 router.get('/api/youtube/search/*', async (req, res) => {
     let videos = await getSearch(req);
-    let data = {
-        status: "success",
-        results: videos
-    }
+    let data;
 
     if (!videos) {
         data = {
@@ -81,13 +78,27 @@ router.get('/api/youtube/search/*', async (req, res) => {
         }
     }
 
+    data = {
+        status: "success",
+        results: videos
+    };
+
     res.setHeader('Content-Type', 'application/json');
     res.send(data);
 });
 
 router.get('/api/youtube/data/*', async (req, res) => {
     let video = await getVideo(req);
-    let data = {
+    let data;
+
+    if (!video) {
+        let data = {
+        status: "error",
+        error: `Could not resolve video address of ${req.params[0]}`, 
+        };
+    }
+
+    data = {
         status: "success",
         title: video.videoDetails.title,
         source: {
@@ -95,13 +106,6 @@ router.get('/api/youtube/data/*', async (req, res) => {
             audio: '/api/youtube/audio/' + video.videoDetails.video_url
         }
     };
-
-    if (!video) {
-        data = {
-        status: "error",
-        error: `Could not resolve video address of ${req.params[0]}`, 
-        };
-    }
     
     res.setHeader('Content-Type', 'application/json');
     res.send(data);
