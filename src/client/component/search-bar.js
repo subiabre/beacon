@@ -9,6 +9,7 @@ class SearchBar extends EventEmitter
         super();
 
         this.getEventTargetRecursive = this.getEventTargetRecursive.bind(this);
+        this.hideYoutubeResults = this.hideYoutubeResults.bind(this);
         this.handleSearchSubmit = this.handleSearchSubmit.bind(this);
         this.handleSelectVideo = this.handleSelectVideo.bind(this);
 
@@ -63,6 +64,7 @@ class SearchBar extends EventEmitter
 
         screen.setAttribute('id', 'youtuberesults');
         screen.setAttribute('class', 'Screen screenContent75 bgBlack75 textWhite scrollVertical');
+        screen.addEventListener('click', this.hideYoutubeResults);
 
         document.body.appendChild(screen);
 
@@ -94,6 +96,13 @@ class SearchBar extends EventEmitter
         })
     }
 
+    hideYoutubeResults(event)
+    {
+        let screen = document.getElementById('youtuberesults');
+
+        document.body.removeChild(screen);
+    }
+
     getEventTargetRecursive(attribute, element)
     {
         let isCurrent = element.getAttribute(attribute);
@@ -105,13 +114,8 @@ class SearchBar extends EventEmitter
 
     handleSelectVideo(event)
     {
-
-        let screen = document.getElementById('youtuberesults');
-
         let item = this.getEventTargetRecursive('youtubelink', event.target);
         let url = item.getAttribute('youtubelink');
-
-        document.body.removeChild(screen);
 
         api.youtube(url, (data) => {
             if (data.status == 'error') {
