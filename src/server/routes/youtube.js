@@ -19,7 +19,13 @@ const getVideo = async (req) =>
     
     if (!url) return false;
 
-    return await ytdl.getInfo(url);
+    try {
+        return await ytdl.getInfo(url);
+    } catch (err) {
+        logger.trace(err);
+
+        return false;
+    }
 }
 
 /**
