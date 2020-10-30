@@ -46,11 +46,11 @@ const eventListener = (io) =>
 
     /**
      * Return a socket from the list or false if not found
-     * @param {Array} list List of sockets
      * @param {String} needle Id of socket to return
      */
-    const getFromList = async (list, needle) =>
+    const getFromList = async (needle) =>
     {
+        let list = await database.getModelsOnline();
         let result = list.filter(socket => {
             if (socket.id == needle) return socket
         })[0];
@@ -82,7 +82,7 @@ const eventListener = (io) =>
         });
 
         socket.on('socket:setTarget', async (target) => {
-            target = await getFromList(list, target) || model;
+            target = await getFromList(target) || model;
 
             logger.debug(`${socket.id} has set ${target.id} as target`);
             io.to(target.id).emit('socket:setOrigin', socket.id);
@@ -93,7 +93,7 @@ const eventListener = (io) =>
         });
 
         socket.on('socket:resetTarget', async (target) => {
-            target = await getFromList(list, target) || model;
+            target = await getFromList(target) || model;
 
             logger.debug(`${socket.id} has reset ${target.id} as target`);
             io.to(target.id).emit('socket:resetOrigin', socket.id);
