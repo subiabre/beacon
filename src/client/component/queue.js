@@ -110,8 +110,6 @@ class Queue extends EventEmitter
 
         this.items = this.items.filter((item) => item.index !== data.index);
 
-        console.log(this.items);
-
         list.removeChild(item);
     }
 
@@ -136,6 +134,8 @@ class Queue extends EventEmitter
         this.setIsPlaying(data);
         this.isPlaying = data;
         this.socket.emit('queue:play', this.sockets.target, data);
+
+        console.log(data);
     }
 
     handlePlayNext()
@@ -144,6 +144,8 @@ class Queue extends EventEmitter
         let data = this.items.filter(item => {
             return item.index == index;
         })[0];
+
+        if (typeof data === 'undefined') return;
 
         this.handlePlay(data);
     }
