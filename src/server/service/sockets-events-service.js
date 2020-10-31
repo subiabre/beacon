@@ -3,7 +3,7 @@
 const Cookies = require('cookies');
 const uuid = require('short-uuid');
 const database = require('./sockets-db-service')
-const logger = require('../service/logger')
+const logger = require('../service/logger').child({id: 'socket-events-service'})
 
 const preserveId = (req, res) =>
 {
@@ -121,7 +121,7 @@ const eventListener = (io) =>
         });
 
         socket.on('play:playerTime', async (origin, time) => {
-            logger.debug(`${socket.id} is telling time ${time} to ${origin}`);
+            // logger.debug(`${socket.id} is telling time ${time} to ${origin}`);
             io.to(origin).emit('play:playerTime', time);
         });
 
