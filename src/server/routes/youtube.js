@@ -3,11 +3,8 @@
 const express = require('express');
 const router = express.Router();
 const ytdl = require('ytdl-core');
-const ytsearch = require('youtube-search');
-const dotenv = require('dotenv');
-const logger = require('../service/logger');
-
-dotenv.config();
+const ytsr = require('ytsr');
+const logger = require('../service/logger').child({id: 'routes-youtube'});
 
 /**
  * Obtain the video info object from the request
@@ -36,20 +33,15 @@ const getSearch = async (req) =>
 {
     let query = req.params[0];
 
-    return new Promise((resolve, reject) => {
-        ytsearch(query, {
-            maxResults: 10,
-            type: 'video',
-            key: process.env.YOUTUBE_API_KEY
-        }, (err, results) => {
-            if (err) {
-                reject(false);
-
-                logger.trace(err);
-            }
-
-            resolve(results);
+    return await ytsr.getFilters(query).then(async filter => {
+        return await ytsr(null, {
+            limit: 15,
+            nextpageRef: filter.get('Type').find(o => o.name === 'Video')
         });
+    }).catch(err => {
+        logger.trace(err);
+
+        return false;
     });
 }
 
@@ -76,12 +68,12 @@ router.get('/api/youtube/search/*', async (req, res) => {
         status: "error",
         error: `Could not find search results for ${req.params[0]}`,
         }
+    } else {
+        data = {
+            status: "success",
+            results: videos
+        };
     }
-
-    data = {
-        status: "success",
-        results: videos
-    };
 
     res.setHeader('Content-Type', 'application/json');
     res.send(data);
@@ -92,20 +84,20 @@ router.get('/api/youtube/data/*', async (req, res) => {
     let data;
 
     if (!video) {
-        let data = {
+        data = {
         status: "error",
         error: `Could not resolve video address of ${req.params[0]}`, 
         };
+    } else {
+        data = {
+            status: "success",
+            title: video.videoDetails.title,
+            source: {
+                video: '/api/youtube/video/' + video.videoDetails.video_url,
+                audio: '/api/youtube/audio/' + video.videoDetails.video_url
+            }
+        };
     }
-
-    data = {
-        status: "success",
-        title: video.videoDetails.title,
-        source: {
-            video: '/api/youtube/video/' + video.videoDetails.video_url,
-            audio: '/api/youtube/audio/' + video.videoDetails.video_url
-        }
-    };
     
     res.setHeader('Content-Type', 'application/json');
     res.send(data);
