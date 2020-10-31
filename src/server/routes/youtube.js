@@ -52,11 +52,18 @@ const getSearch = async (req) =>
  */
 const getVideoFormat = async (video, filter) => {
     let videoFormats = ytdl.filterFormats(video.formats, filter);
-    let format = videoFormats.filter((format) => {
-        return typeof format.contentLength !== 'undefined';
-    })[0];
 
-    return format;
+    if (!videoFormats) return false;
+
+    try {
+        return videoFormats.filter((format) => {
+            return typeof format.contentLength !== 'undefined';
+        })[0];
+    } catch(err) {
+        logger.trace(err);
+
+        return false;
+    }
 }
 
 router.get('/api/youtube/search/*', async (req, res) => {
