@@ -32,17 +32,17 @@ const getVideo = async (req) =>
 const getSearch = async (req) =>
 {
     let query = req.params[0];
-
-    return await ytsr.getFilters(query).then(async filter => {
-        return await ytsr(null, {
-            limit: 15,
-            nextpageRef: filter.get('Type').find(o => o.name === 'Video')
+    let search = await ytsr(query, { limit: 15 })
+        .then(data => {
+            return data.items.filter(data => {data.type === 'video'});
+        })
+        .catch(err => {
+            logger.trace(err);
         });
-    }).catch(err => {
-        logger.trace(err);
 
-        return false;
-    });
+    if (!search) return false;
+
+    return search;
 }
 
 /**
