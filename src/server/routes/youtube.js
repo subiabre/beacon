@@ -34,7 +34,7 @@ const getSearch = async (req) =>
     let query = req.params[0];
     let search = await ytsr(query, { limit: 15 })
         .then(data => {
-            return data.items.filter(data => {data.type === 'video'});
+            return data.items.filter(item => item.type === 'video');
         })
         .catch(err => {
             logger.trace(err);
@@ -78,7 +78,11 @@ router.get('/api/youtube/search/*', async (req, res) => {
     } else {
         data = {
             status: "success",
-            results: videos
+            results: videos.map(video => {
+                video.thumbnail = video.thumbnails[1].url;
+
+                return video;
+            })
         };
     }
 
