@@ -74,7 +74,7 @@ class SearchBar extends EventEmitter
             let image = document.createElement('img');
             let title = document.createElement('span');
 
-            image.setAttribute('class', 'centerVertical padding');
+            image.setAttribute('class', 'centerVertical padding width25');
             image.src = result.thumbnail;
  
             title.innerHTML = result.title;

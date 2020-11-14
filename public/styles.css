@@ -37,6 +37,11 @@
     max-width: 90vh;
 }
 
+.width25
+{
+    width: 25vw;
+}
+
 .height5
 {
     height: 5vh;

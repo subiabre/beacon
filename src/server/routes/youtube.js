@@ -79,7 +79,7 @@ router.get('/api/youtube/search/*', async (req, res) => {
         data = {
             status: "success",
             results: videos.map(video => {
-                video.thumbnail = video.thumbnails[1].url;
+                video.thumbnail = video.bestThumbnail.url;
 
                 return video;
             })
